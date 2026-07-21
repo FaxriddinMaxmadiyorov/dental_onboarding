@@ -3,6 +3,7 @@ class CandidateOnboardingsController < ApplicationController
 
   def upload
     # renders CV upload screen
+    @document = @profile.candidate_documents.build(document_type: "cv")
   end
 
   def upload_cv
@@ -53,7 +54,7 @@ class CandidateOnboardingsController < ApplicationController
   private
 
   def set_profile
-    @profile = current_user.candidate_profile || current_user.create_candidate_profile
+    @profile = Current.user.candidate_profile || Current.user.create_candidate_profile
   end
 
   def profile_params

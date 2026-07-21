@@ -129,6 +129,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "skills", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "function_group"
@@ -138,9 +147,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "email"
-    t.string "password_digest"
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
     t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
   create_table "work_experiences", force: :cascade do |t|
@@ -166,5 +176,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
   add_foreign_key "candidate_skills", "candidate_profiles"
   add_foreign_key "candidate_skills", "skills"
   add_foreign_key "educations", "candidate_profiles"
+  add_foreign_key "sessions", "users"
   add_foreign_key "work_experiences", "candidate_profiles"
 end
