@@ -1,0 +1,25 @@
+<div class="max-w-xl mx-auto py-12">
+  <h1 class="text-2xl font-semibold mb-2">CV'ingizni yuklang</h1>
+  <p class="text-gray-600 mb-6">
+    Biz profilingizni imkon qadar avtomatik to'ldiramiz.
+    Saqlashdan oldin barcha ma'lumotlarni ko'rib chiqishingiz va tahrirlashingiz mumkin.
+  </p>
+
+  <%= form_with model: @document, url: upload_cv_candidate_onboarding_path,
+      data: { controller: "cv-upload" } do |f| %>
+    <div data-cv-upload-target="dropzone"
+         class="border-2 border-dashed rounded-lg p-10 text-center cursor-pointer">
+      <%= f.file_field :file, data: {
+            cv_upload_target: "input",
+            action: "change->cv-upload#fileSelected"
+          }, accept: ".pdf,.doc,.docx", class: "hidden" %>
+      <p>Faylni shu yerga tashlang yoki bosing (PDF, DOC, DOCX, max 25MB)</p>
+    </div>
+
+    <%= f.submit "CV'ni tahlil qilish", data: { cv_upload_target: "submitButton" },
+        class: "mt-4 w-full bg-blue-600 text-white rounded py-2" %>
+  <% end %>
+
+  <%= link_to "Qo'lda davom etish", edit_profile_candidate_onboarding_path,
+      class: "block text-center text-sm text-gray-500 mt-4" %>
+</div>

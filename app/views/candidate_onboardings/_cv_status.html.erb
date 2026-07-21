@@ -1,0 +1,12 @@
+<% case document&.parsing_status %>
+<% when "processing", "pending" %>
+  <p>CV tahlil qilinmoqda...</p>
+  <meta http-equiv="refresh" content="2">
+<% when "completed" %>
+  <% redirect_via_turbo = true %>
+  <script>window.location = "<%= edit_profile_candidate_onboarding_path %>"</script>
+<% when "failed" %>
+  <p class="text-red-600">CV'ni tahlil qilib bo'lmadi.</p>
+  <%= link_to "Qo'lda davom etish", edit_profile_candidate_onboarding_path,
+      class: "text-blue-600 underline" %>
+<% end %>

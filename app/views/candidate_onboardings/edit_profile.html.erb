@@ -1,0 +1,84 @@
+<%= form_with model: @profile, url: candidate_onboarding_path, method: :patch,
+    data: { controller: "conditional-fields",
+            conditional_fields_big_functions_value: CandidateProfile::BIG_FUNCTIONS.to_json } do |f| %>
+
+  <section>
+    <h2>Shaxsiy ma'lumotlar</h2>
+    <%= f.text_field :first_name, placeholder: "Ism" %>
+    <%= f.text_field :last_name, placeholder: "Familiya" %>
+    <%= f.text_field :city, placeholder: "Shahar" %>
+    <%= f.text_field :country, placeholder: "Mamlakat" %>
+  </section>
+
+  <section>
+    <h2>Ish afzalliklari</h2>
+    <%= f.select :desired_job_function,
+        options_for_select([["Umumiy stomatolog", "general_dentist"],
+                             ["Stomatolog gigienist", "dental_hygienist"],
+                             ["Dental assistent", "dental_assistant"]], @profile.desired_job_function),
+        {}, data: { conditional_fields_target: "jobFunction",
+                    action: "change->conditional-fields#toggleBigFields" } %>
+
+    <div data-conditional-fields-target="bigSection" class="<%= 'hidden' unless @profile.shows_big_fields? %>">
+      <%= f.select :big_status, CandidateProfile::BIG_STATUSES %>
+      <%= f.text_field :big_number, placeholder: "BIG raqami" %>
+    </div>
+  </section>
+
+  <section>
+    <h2>Bandlik turi</h2>
+    <% %w[employed self_employed percentage_based].each do |type| %>
+      <label>
+        <%= check_box_tag "candidate_profile[employment_type][]", type,
+            @profile.employment_type&.include?(type),
+            id: nil,
+            data: { conditional_fields_target: "employmentType",
+                    action: "change->conditional-fields#toggleEmploymentFields" } %>
+        <%= type.humanize %>
+      </label>
+    <% end %>
+
+    <div data-conditional-fields-target="salaryField" class="<%= 'hidden' unless @profile.shows_salary_field? %>">
+      <%= f.number_field :desired_salary, placeholder: "Kutilayotgan maosh" %>
+    </div>
+    <div data-conditional-fields-target="percentageField" class="<%= 'hidden' unless @profile.shows_percentage_field? %>">
+      <%= f.number_field :desired_percentage, placeholder: "Foiz (%)" %>
+    </div>
+  </section>
+
+  <section data-controller="repeater">
+    <h2>Ta'lim</h2>
+    <template data-repeater-target="template">
+      <%= f.fields_for :educations, Education.new, child_index: "NEW_RECORD" do |edu_f| %>
+        <%= render "education_fields", f: edu_f %>
+      <% end %>
+    </template>
+
+    <div data-repeater-target="list">
+      <%= f.fields_for :educations do |edu_f| %>
+        <%= render "education_fields", f: edu_f %>
+      <% end %>
+    </div>
+
+    <button type="button" data-action="repeater#add">+ Ta'lim qo'shish</button>
+  </section>
+
+  <section data-controller="repeater">
+    <h2>Ish tajribasi</h2>
+    <template data-repeater-target="template">
+      <%= f.fields_for :work_experiences, WorkExperience.new, child_index: "NEW_RECORD" do |we_f| %>
+        <%= render "work_experience_fields", f: we_f %>
+      <% end %>
+    </template>
+
+    <div data-repeater-target="list">
+      <%= f.fields_for :work_experiences do |we_f| %>
+        <%= render "work_experience_fields", f: we_f %>
+      <% end %>
+    </div>
+
+    <button type="button" data-action="repeater#add">+ Ish tajribasi qo'shish</button>
+  </section>
+
+  <%= f.submit "Profilni saqlash" %>
+<% end %>

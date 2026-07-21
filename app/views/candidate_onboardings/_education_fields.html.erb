@@ -1,0 +1,10 @@
+<div class="nested-fields">
+  <%= f.text_field :institution, placeholder: "Muassasa" %>
+  <%= f.text_field :study, placeholder: "Yo'nalish" %>
+  <%= f.select :level, Education::LEVELS %>
+  <% if f.object.from_cv? %>
+    <span class="text-xs text-amber-600">CV'dan olindi — tekshiring</span>
+  <% end %>
+  <%= f.hidden_field :_destroy %>
+  <button type="button" data-action="repeater#remove">O'chirish</button>
+</div>
