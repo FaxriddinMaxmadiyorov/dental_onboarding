@@ -11,4 +11,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  resource :candidate_onboarding, only: [:show, :update] do
+    member do
+      get :upload          # step 1 screen
+      post :upload_cv       # handle file upload
+      get :status           # polled / turbo-stream'ed while parsing
+      get :edit_profile     # step 2 screen
+    end
+  end
 end
