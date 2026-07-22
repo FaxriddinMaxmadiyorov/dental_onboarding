@@ -20,6 +20,18 @@ class CandidateProfile < ApplicationRecord
   BIG_FUNCTIONS = %w[general_dentist dental_hygienist specialist].freeze
   EMPLOYED_TYPES = %w[employed].freeze
   SELF_EMPLOYED_TYPES = %w[self_employed percentage_based].freeze
+  JOB_FUNCTION_TO_SKILL_GROUP = {
+    "general_dentist" => "dentist",
+    "specialist" => "dentist",
+    "dental_hygienist" => "dental_hygienist",
+    "dental_assistant" => "dental_assistant",
+    "prevention_assistant" => "dental_assistant",
+    "paro_prevention_assistant" => "dental_assistant",
+    "orthodontic_assistant" => "dental_assistant",
+    "front_office" => "front_office",
+    "practice_manager" => "practice_manager",
+    "dental_technician" => "dental_technician"
+  }.freeze
 
   validates :first_name, :last_name, :email_for_validation_placeholder, presence: true, on: :final_save
   # Note: email lives on User; validate via delegation if needed.

@@ -7,6 +7,13 @@ class CandidateOnboardingsController < ApplicationController
   end
 
   def upload_cv
+    unless params[:consent].present?
+      @document = @profile.candidate_documents.build(document_type: "cv")
+      flash.now[:alert] = "Davom etish uchun ma'lumotlarni qayta ishlashga rozilik berishingiz kerak."
+      render :upload, status: :unprocessable_entity
+      return
+    end
+
     document = @profile.candidate_documents.build(document_type: "cv")
     document.file.attach(params.require(:candidate_document)[:file])
     document.original_filename = document.file.filename.to_s
@@ -14,9 +21,11 @@ class CandidateOnboardingsController < ApplicationController
     document.file_size = document.file.byte_size
 
     if document.save
+      @profile.update!(consent_given: true)
       ParseCandidateCvJob.perform_later(document.id)
       redirect_to status_candidate_onboarding_path
     else
+      @document = document
       flash.now[:alert] = document.errors.full_messages.to_sentence
       render :upload, status: :unprocessable_entity
     end
@@ -41,7 +50,7 @@ class CandidateOnboardingsController < ApplicationController
   def update
     if @profile.update(profile_params.merge(onboarding_completed: true))
       @profile.validate(:final_save) # trigger stricter validations if desired
-      NotifyRecruitmentTeamJob.perform_later(@profile.id) if defined?(NotifyRecruitmentTeamJob)
+      NotifyRecruitmentTeamJob.perform_later(@profile.id)
       redirect_to root_path, notice: "Profil muvaffaqiyatli saqlandi"
     else
       render :edit_profile, status: :unprocessable_entity
