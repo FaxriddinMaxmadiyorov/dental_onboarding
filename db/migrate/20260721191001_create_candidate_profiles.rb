@@ -1,7 +1,6 @@
 class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
   def change
     create_table :candidate_profiles do |t|
-      t.references :user, null: false, foreign_key: true
       t.string :first_name
       t.string :last_name
       t.string :phone
@@ -31,6 +30,9 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.boolean :onboarding_completed
 
       t.string :cv_filled_fields, array: true, default: []
+      t.string :session_token, null: false
+
+      t.index :session_token, unique: true
 
       t.timestamps
     end

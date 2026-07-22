@@ -67,7 +67,18 @@ class CandidateOnboardingsController < ApplicationController
   private
 
   def set_profile
-    @profile = Current.user.candidate_profile || Current.user.create_candidate_profile
+    token = cookies.signed[:candidate_session]
+
+    @profile = CandidateProfile.find_by(session_token: token) if token
+
+    if @profile.nil?
+      @profile = CandidateProfile.create!
+      cookies.signed[:candidate_session] = {
+        value: @profile.session_token,
+        expires: 1.year,
+        httponly: true
+      }
+    end
   end
 
   def profile_params

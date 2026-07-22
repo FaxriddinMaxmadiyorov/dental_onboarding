@@ -8,6 +8,10 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+User.find_or_create_by!(email_address: "admin@example.com") do |u|
+  u.password = "changeme123"
+end
+
 %w[English Dutch German French Spanish Russian Uzbek Turkish Arabic].each do |name|
   Language.find_or_create_by!(name: name)
 end

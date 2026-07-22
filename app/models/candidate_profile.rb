@@ -1,5 +1,5 @@
 class CandidateProfile < ApplicationRecord
-  belongs_to :user
+  before_create :generate_session_token
 
   has_many :candidate_documents, dependent: :destroy
   has_many :educations, dependent: :destroy
@@ -80,5 +80,11 @@ class CandidateProfile < ApplicationRecord
 
   def shows_average_revenue_field?
     AVERAGE_REVENUE_FUNCTIONS.include?(desired_job_function)
+  end
+
+  private
+
+  def generate_session_token
+    self.session_token = SecureRandom.urlsafe_base64(32)
   end
 end
