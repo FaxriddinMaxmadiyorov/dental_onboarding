@@ -2,10 +2,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "dropzone", "submitButton"]
+  static targets = ["input", "dropzone", "submitButton", "placeholder", "fileInfo", "fileName", "fileSize"]
 
   connect() {
-    this.dropzoneTarget.addEventListener("click", () => this.inputTarget.click())
+    this.dropzoneTarget.addEventListener("click", (e) => {
+      if (e.target.closest("[data-action='cv-upload#clearFile']")) return
+      this.inputTarget.click()
+    })
 
     this.dropzoneTarget.addEventListener("dragenter", this.preventAndHighlight.bind(this))
     this.dropzoneTarget.addEventListener("dragover", this.preventAndHighlight.bind(this))
@@ -32,12 +35,40 @@ export default class extends Controller {
     const files = event.dataTransfer.files
     if (files.length) {
       this.inputTarget.files = files
-      this.submit()
+      this.showFileInfo(files[0])
     }
   }
 
   fileSelected() {
-    if (this.inputTarget.files.length) this.submit()
+    if (this.inputTarget.files.length) {
+      this.showFileInfo(this.inputTarget.files[0])
+    }
+  }
+
+  showFileInfo(file) {
+    this.placeholderTarget.classList.add("hidden")
+    this.fileInfoTarget.classList.remove("hidden")
+
+    this.fileNameTarget.textContent = file.name
+    this.fileSizeTarget.textContent = this.formatSize(file.size)
+
+    this.submitButtonTarget.disabled = false
+  }
+
+  clearFile(event) {
+    event.stopPropagation()
+
+    this.inputTarget.value = ""
+    this.placeholderTarget.classList.remove("hidden")
+    this.fileInfoTarget.classList.add("hidden")
+    this.submitButtonTarget.disabled = true
+  }
+
+  formatSize(bytes) {
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(0)} KB`
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
   submit() {
