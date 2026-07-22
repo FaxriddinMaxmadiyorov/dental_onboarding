@@ -80,8 +80,7 @@ class CvParserService
     body = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
-        response_mime_type: "application/json",
-        thinking_config: { thinking_budget: 0 } # extraction uchun thinking kerak emas — tezroq va tejamkor
+        response_mime_type: "application/json"
       }
     }
 
