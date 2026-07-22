@@ -4,6 +4,7 @@ class ParseCandidateCvJob < ApplicationJob
   def perform(document_id)
     document = CandidateDocument.find(document_id)
     document.update!(parsing_status: "processing")
+    broadcast_status(document)
 
     parsed = CvParserService.new(document).call
     document.update!(
@@ -13,8 +14,23 @@ class ParseCandidateCvJob < ApplicationJob
     )
 
     ProfilePrefillService.new(document.candidate_profile, parsed).call
+
+    broadcast_status(document)
   rescue => e
-    document.update!(parsing_status: "failed")
     Rails.logger.error("CV parsing failed for document #{document_id}: #{e.message}")
+    document.update!(parsing_status: "failed")
+
+    broadcast_status(document)
+  end
+
+  private
+
+  def broadcast_status(document)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "cv_status_#{document.candidate_profile_id}",
+      target: "cv_status",
+      partial: "candidate_onboardings/cv_status",
+      locals: { document: document }
+    )
   end
 end

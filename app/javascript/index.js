@@ -6,3 +6,4 @@ import CvUploadController from "./cv_upload_controller"
 application.register("conditional-fields", ConditionalFieldsController)
 application.register("repeater", RepeaterController)
 application.register("cv-upload", CvUploadController)
+application.register("redirect", RedirectController)

@@ -33,12 +33,6 @@ class CandidateOnboardingsController < ApplicationController
 
   def status
     document = @profile.latest_cv
-
-    if document&.parsing_status == "completed"
-      redirect_to edit_profile_candidate_onboarding_path
-      return
-    end
-
     render :status, locals: { document: document }
   end
 

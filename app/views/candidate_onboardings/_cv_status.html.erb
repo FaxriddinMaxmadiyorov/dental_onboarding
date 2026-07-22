@@ -11,4 +11,12 @@
   <p class="text-red-600 mb-3">CV'ni tahlil qilib bo'lmadi.</p>
   <%= link_to "Qo'lda davom etish", edit_profile_candidate_onboarding_path,
       class: "text-teal-700 underline hover:no-underline" %>
+<% when "completed" %>
+  <div class="flex flex-col items-center gap-3" data-controller="redirect"
+      data-redirect-url-value="<%= edit_profile_candidate_onboarding_path %>">
+    <svg class="h-6 w-6 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p class="text-slate-600">Tayyor! Yo'naltirilyapti...</p>
+  </div>
 <% end %>
