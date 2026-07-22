@@ -8,6 +8,7 @@ module Admin
 
 
     def new
+      redirect_to admin_root_path if authenticated?
     end
 
     def create
