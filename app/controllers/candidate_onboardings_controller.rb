@@ -24,16 +24,13 @@ class CandidateOnboardingsController < ApplicationController
 
   def status
     document = @profile.latest_cv
-    respond_to do |format|
-      format.html { render :status, locals: { document: document } }
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.replace(
-          "cv_status",
-          partial: "candidate_onboardings/cv_status",
-          locals: { document: document }
-        )
-      end
+
+    if document&.parsing_status == "completed"
+      redirect_to edit_profile_candidate_onboarding_path
+      return
     end
+
+    render :status, locals: { document: document }
   end
 
   def edit_profile

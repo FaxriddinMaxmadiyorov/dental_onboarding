@@ -103,7 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.bigint "candidate_profile_id", null: false
     t.datetime "created_at", null: false
     t.string "free_text_suggestion"
-    t.bigint "skill_id", null: false
+    t.bigint "skill_id"
     t.datetime "updated_at", null: false
     t.index ["candidate_profile_id"], name: "index_candidate_skills_on_candidate_profile_id"
     t.index ["skill_id"], name: "index_candidate_skills_on_skill_id"

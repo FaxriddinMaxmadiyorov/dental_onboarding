@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       get :upload          # step 1 screen
       post :upload_cv       # handle file upload
       get :status           # polled / turbo-stream'ed while parsing
+      get :status_frame
       get :edit_profile     # step 2 screen
     end
   end
