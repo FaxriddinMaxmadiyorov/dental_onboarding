@@ -20,6 +20,21 @@ class CandidateProfile < ApplicationRecord
   BIG_FUNCTIONS = %w[general_dentist dental_hygienist specialist].freeze
   EMPLOYED_TYPES = %w[employed].freeze
   SELF_EMPLOYED_TYPES = %w[self_employed percentage_based].freeze
+  AVERAGE_REVENUE_FUNCTIONS = %w[general_dentist dental_hygienist specialist prevention_assistant].freeze
+
+  JOB_FUNCTIONS = {
+    "General Dentist" => "general_dentist",
+    "Dental Hygienist" => "dental_hygienist",
+    "Dental Assistant" => "dental_assistant",
+    "Prevention Assistant" => "prevention_assistant",
+    "Paro-Prevention Assistant" => "paro_prevention_assistant",
+    "Orthodontic Assistant" => "orthodontic_assistant",
+    "Front-Office / Receptionist" => "front_office",
+    "Practice Manager" => "practice_manager",
+    "Dental Technician" => "dental_technician",
+    "Specialist" => "specialist"
+  }.freeze
+
   JOB_FUNCTION_TO_SKILL_GROUP = {
     "general_dentist" => "dentist",
     "specialist" => "dentist",
@@ -57,5 +72,13 @@ class CandidateProfile < ApplicationRecord
 
   def latest_cv
     candidate_documents.where(document_type: "cv").order(created_at: :desc).first
+  end
+
+  def field_from_cv?(field_name)
+    cv_filled_fields.include?(field_name.to_s)
+  end
+
+  def shows_average_revenue_field?
+    AVERAGE_REVENUE_FUNCTIONS.include?(desired_job_function)
   end
 end

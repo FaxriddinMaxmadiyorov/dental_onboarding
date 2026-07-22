@@ -9,7 +9,8 @@
       class: "space-y-6",
       data: { controller: "conditional-fields",
               conditional_fields_big_functions_value: CandidateProfile::BIG_FUNCTIONS.to_json,
-              conditional_fields_job_function_to_skill_group_value: CandidateProfile::JOB_FUNCTION_TO_SKILL_GROUP.to_json } do |f| %>
+              conditional_fields_job_function_to_skill_group_value: CandidateProfile::JOB_FUNCTION_TO_SKILL_GROUP.to_json,
+              conditional_fields_average_revenue_functions_value: CandidateProfile::AVERAGE_REVENUE_FUNCTIONS.to_json } do |f| %>
 
     <% if @profile.errors.any? %>
       <div class="rounded-lg bg-red-50 p-4 text-sm text-red-700">
@@ -23,59 +24,102 @@
     <% end %>
 
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <h2 class="mb-4 text-base font-semibold text-slate-900">Shaxsiy ma'lumotlar</h2>
+      <h2 class="mb-4 text-base font-semibold text-slate-900">Personal Details</h2>
 
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <%= f.text_field :first_name, placeholder: "Ism",
-            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-        <%= f.text_field :last_name, placeholder: "Familiya",
-            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-        <%= f.text_field :city, placeholder: "Shahar",
-            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-        <%= f.text_field :country, placeholder: "Mamlakat",
-            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        <div>
+          <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            First Name <%= field_status_label(@profile, :first_name, required: true) %>
+          </label>
+          <%= f.text_field :first_name, autocomplete: "off",
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+
+        <div>
+          <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            Last Name <%= field_status_label(@profile, :last_name, required: true) %>
+          </label>
+          <%= f.text_field :last_name, autocomplete: "off",
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">
+            Email <%= field_status_label(@profile, :email, required: true) %>
+          </label>
+          <%= f.text_field :email, autocomplete: "off",
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+
+        <div>
+          <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            Phone Number <%= field_status_label(@profile, :phone, required: true) %>
+          </label>
+          <%= f.telephone_field :phone, autocomplete: "off", placeholder: "+998 90 123 45 67",
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+
+        <div>
+          <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            City <%= field_status_label(@profile, :city, required: true) %>
+          </label>
+          <%= f.text_field :city, autocomplete: "off",
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+
+        <div>
+          <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            Country <%= field_status_label(@profile, :country, required: true) %>
+          </label>
+          <%= f.text_field :country,
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+      </div>
+
+      <div class="mt-5 border-t border-slate-100 pt-5" data-controller="repeater">
+        <div class="mb-3 flex items-center justify-between">
+          <h3 class="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+            Tillar
+            <% if @profile.candidate_languages.empty? %>
+              <span class="text-xs font-normal text-red-500">Missing</span>
+            <% end %>
+          </h3>
+          <button type="button" data-action="repeater#add"
+              class="text-sm font-medium text-teal-700 hover:text-teal-800 hover:underline">
+            + Til qo'shish
+          </button>
+        </div>
+
+        <template data-repeater-target="template">
+          <%= f.fields_for :candidate_languages, CandidateLanguage.new, child_index: "NEW_RECORD" do |lang_f| %>
+            <%= render "language_fields", f: lang_f %>
+          <% end %>
+        </template>
+
+        <div data-repeater-target="list" class="space-y-3">
+          <%= f.fields_for :candidate_languages do |lang_f| %>
+            <%= render "language_fields", f: lang_f %>
+          <% end %>
+        </div>
       </div>
     </section>
 
-    <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200" data-controller="repeater">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-900">Tillar</h2>
-        <button type="button" data-action="repeater#add"
-            class="text-sm font-medium text-teal-700 hover:text-teal-800 hover:underline">
-          + Til qo'shish
-        </button>
-      </div>
-
-      <template data-repeater-target="template">
-        <%= f.fields_for :candidate_languages, CandidateLanguage.new, child_index: "NEW_RECORD" do |lang_f| %>
-          <%= render "language_fields", f: lang_f %>
-        <% end %>
-      </template>
-
-      <div data-repeater-target="list" class="space-y-3">
-        <%= f.fields_for :candidate_languages do |lang_f| %>
-          <%= render "language_fields", f: lang_f %>
-        <% end %>
-      </div>
-    </section>
 
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <h2 class="mb-4 text-base font-semibold text-slate-900">Ish afzalliklari</h2>
+      <h2 class="mb-4 text-base font-semibold text-slate-900">Job Preferences</h2>
 
       <div class="mb-4">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">Xohlagan lavozim</label>
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Desired Job Function</label>
         <%= f.select :desired_job_function,
-            options_for_select([["Umumiy stomatolog", "general_dentist"],
-                                ["Stomatolog gigienist", "dental_hygienist"],
-                                ["Dental assistent", "dental_assistant"]], @profile.desired_job_function),
+            options_for_select(CandidateProfile::JOB_FUNCTIONS, @profile.desired_job_function),
             {},
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20",
             data: { conditional_fields_target: "jobFunction",
-                    action: "change->conditional-fields#toggleBigFields change->conditional-fields#toggleSkillsGroup" } %>
+                    action: "change->conditional-fields#toggleBigFields change->conditional-fields#toggleSkillsGroup change->conditional-fields#toggleAverageRevenueField" } %>
       </div>
 
       <div class="mb-4">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">Afzal ko'rgan hududlar</label>
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Preferred Regions</label>
         <div class="flex flex-wrap gap-4">
           <% %w[Tashkent Samarkand Bukhara Fergana Namangan Andijan].each do |region| %>
             <label class="flex items-center gap-2 text-sm text-slate-700">
@@ -84,21 +128,20 @@
                   id: nil,
                   class: "h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-600/40" %>
               <%= region %>
-            </label>
-          <% end %>
-        </div>
+          </label>
+        <% end %>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">Maksimal yo'l vaqti (daqiqa)</label>
-          <%= f.number_field :max_travel_time, placeholder: "masalan: 30",
+          <label class="mb-1.5 block text-sm font-medium text-slate-700">Max Travel Time</label>
+          <%= f.number_field :max_travel_time, placeholder: "ex: 30",
               class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
         </div>
         <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">Ish qidiruv holati</label>
+          <label class="mb-1.5 block text-sm font-medium text-slate-700">Search Status</label>
           <%= f.select :search_status,
-              options_for_select([["Faol", "active"], ["Passiv", "passive"], ["Faol emas", "inactive"]],
+              options_for_select([["Yes", "active"], ["Passive", "passive"], ["No", "inactive"]],
                                   @profile.search_status),
               {},
               class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
@@ -106,7 +149,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">Transport turi</label>
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Transport Options</label>
         <div class="flex flex-wrap gap-4">
           <% [["Bike", "bike"], ["Scooter", "scooter"], ["Public transport", "public_transport"], ["Car", "car"]].each do |label, value| %>
             <label class="flex items-center gap-2 text-sm text-slate-700">
@@ -121,22 +164,14 @@
       </div>
 
       <div class="mb-4">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">Nima uchun yangi ish qidiryapsiz? (ixtiyoriy)</label>
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Reason for looking? (optional)</label>
         <%= f.text_area :reason_for_looking, rows: 2,
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-      </div>
-
-      <div data-conditional-fields-target="bigSection"
-          class="grid grid-cols-1 gap-3 sm:grid-cols-2 <%= 'hidden' unless @profile.shows_big_fields? %>">
-        <%= f.select :big_status, CandidateProfile::BIG_STATUSES, {},
-            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-        <%= f.text_field :big_number, placeholder: "BIG raqami",
-            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
     </section>
 
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <h2 class="mb-4 text-base font-semibold text-slate-900">Bandlik turi</h2>
+      <h2 class="mb-4 text-base font-semibold text-slate-900">Employment and Compensation</h2>
 
       <div class="flex flex-wrap gap-4">
         <% %w[employed self_employed percentage_based].each do |type| %>
@@ -162,63 +197,38 @@
         <%= f.number_field :desired_percentage, placeholder: "Foiz (%)",
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
-    </section>
 
-    <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <h2 class="mb-4 text-base font-semibold text-slate-900">Mavjudlik</h2>
-
-      <div class="flex flex-wrap gap-4 mb-5">
-        <% %w[Monday Tuesday Wednesday Thursday Friday Saturday Sunday].each do |day| %>
-          <label class="flex items-center gap-2 text-sm text-slate-700">
-            <%= check_box_tag "candidate_profile[available_days][]", day,
-                @profile.available_days&.include?(day),
-                id: nil,
-                class: "h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-600/40" %>
-            <%= day %>
-          </label>
-        <% end %>
+      <div data-conditional-fields-target="averageRevenueField"
+        class="mt-4 <%= 'hidden' unless @profile.shows_average_revenue_field? %>">
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">O'rtacha kunlik daromad</label>
+        <%= f.number_field :average_daily_revenue, step: 0.01, placeholder: "masalan: 500000",
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
 
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">Ishga tayyor sana</label>
-          <%= f.date_field :available_from,
-              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-        </div>
-        <div>
-          <label class="mb-1.5 block text-sm font-medium text-slate-700">Ogohlantirish muddati</label>
-          <%= f.text_field :notice_period, placeholder: "masalan: 1 oy",
-              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
-        </div>
+      <div data-conditional-fields-target="bigSection"
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2 <%= 'hidden' unless @profile.shows_big_fields? %>">
+        <%= f.select :big_status, CandidateProfile::BIG_STATUSES, {},
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        <%= f.text_field :big_number, placeholder: "BIG raqami",
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+      </div>
+
+      <div class="mb-4">
+        <label class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+          Years of combined dental experience <%= field_status_label(@profile, :years_of_experience, required: true) %>
+        </label>
+        <%= f.number_field :years_of_experience, placeholder: "masalan: 5",
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
     </section>
 
-    <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <h2 class="mb-4 text-base font-semibold text-slate-900">Ko'nikmalar</h2>
-
-      <% Skill.distinct.pluck(:function_group).compact.each do |group| %>
-        <div data-conditional-fields-target="skillsGroup"
-            data-function-group="<%= group %>"
-            class="hidden grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <% Skill.for_function(group).each do |skill| %>
-            <label class="flex items-center gap-2 text-sm text-slate-700">
-              <%= check_box_tag "candidate_profile[skill_ids][]", skill.id,
-                  @profile.skills.include?(skill),
-                  id: nil,
-                  class: "h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-600/40" %>
-              <%= skill.name %>
-            </label>
-          <% end %>
-        </div>
-      <% end %>
-    </section>
 
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200" data-controller="repeater">
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-900">Ta'lim</h2>
+        <h2 class="text-base font-semibold text-slate-900">Education</h2>
         <button type="button" data-action="repeater#add"
             class="text-sm font-medium text-teal-700 hover:text-teal-800 hover:underline">
-          + Ta'lim qo'shish
+          + Add Education
         </button>
       </div>
 
@@ -237,10 +247,10 @@
 
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200" data-controller="repeater">
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-900">Ish tajribasi</h2>
+        <h2 class="text-base font-semibold text-slate-900">Work Experience</h2>
         <button type="button" data-action="repeater#add"
             class="text-sm font-medium text-teal-700 hover:text-teal-800 hover:underline">
-          + Ish tajribasi qo'shish
+          + Add Work Experience
         </button>
       </div>
 
@@ -258,26 +268,102 @@
     </section>
 
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <h2 class="mb-4 text-base font-semibold text-slate-900">Qo'shimcha ma'lumot</h2>
+      <h2 class="mb-4 text-base font-semibold text-slate-900">Skills</h2>
+
+      <% Skill.distinct.pluck(:function_group).compact.each do |group| %>
+        <div data-conditional-fields-target="skillsGroup"
+            data-function-group="<%= group %>"
+            class="hidden grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <% Skill.for_function(group).each do |skill| %>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+              <%= check_box_tag "candidate_profile[skill_ids][]", skill.id,
+                  @profile.skills.include?(skill),
+                  id: nil,
+                  class: "h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-600/40" %>
+              <%= skill.name %>
+            </label>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% free_text_skills = @profile.candidate_skills.where(skill_id: nil) %>
+      <% if free_text_skills.any? %>
+        <div class="mt-5 border-t border-slate-100 pt-5">
+          <h3 class="mb-2 text-sm font-semibold text-slate-900">
+            <span class="text-xs font-normal text-amber-600">Extracted from CV; please check</span>
+          </h3>
+          <p class="mb-3 text-xs text-slate-500">
+            Unknown skills may be stored as free-text suggestions for recruiter review.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <% free_text_skills.each do |cs| %>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                <%= cs.free_text_suggestion %>
+                <label class="ml-1 flex items-center">
+                  <%= check_box_tag "candidate_profile[remove_free_text_skill_ids][]", cs.id, false,
+                      id: nil, class: "h-3.5 w-3.5 rounded border-slate-300 text-red-600" %>
+                  <span class="ml-1 text-xs text-red-500">olib tashlash</span>
+                </label>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </section>
+
+
+
+    <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+      <h2 class="mb-4 text-base font-semibold text-slate-900">Availability</h2>
+
+      <div class="flex flex-wrap gap-4 mb-5">
+        <% %w[Monday Tuesday Wednesday Thursday Friday Saturday Sunday].each do |day| %>
+          <label class="flex items-center gap-2 text-sm text-slate-700">
+            <%= check_box_tag "candidate_profile[available_days][]", day,
+                @profile.available_days&.include?(day),
+                id: nil,
+                class: "h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-600/40" %>
+            <%= day %>
+          </label>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-slate-700">Available from</label>
+          <%= f.date_field :available_from,
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-slate-700">Notice period</label>
+          <%= f.text_field :notice_period, placeholder: "masalan: 1 oy",
+              class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+        </div>
+      </div>
+    </section>
+
+    
+
+    
+
+    
+
+    <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+      <h2 class="mb-4 text-base font-semibold text-slate-900">Additional Information</h2>
 
       <div class="mb-4">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
-          Professional xulosa
-          <% if @profile.professional_summary.present? %>
-            <span class="ml-1 text-xs font-normal text-amber-600">CV'dan olindi — tekshiring</span>
-          <% end %>
+        <label class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+          Motivation for employer (optional)
         </label>
-        <%= f.text_area :professional_summary, rows: 3,
-            placeholder: "O'zingiz haqingizda qisqacha...",
+        <%= f.text_area :motivation, rows: 3,
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
 
       <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
-          Ish beruvchi uchun motivatsiya (ixtiyoriy)
+        <label class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+          Internal notes for recruitment team (optional)
         </label>
-        <%= f.text_area :motivation, rows: 3,
-            placeholder: "Nima uchun aynan shu ish sizga mos keladi?",
+        <%= f.text_area :internal_notes, rows: 3,
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
     </section>

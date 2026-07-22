@@ -5,11 +5,11 @@
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
     </svg>
-    <p class="text-slate-600">CV tahlil qilinmoqda...</p>
+    <p class="text-slate-600">Analyzing your CV...</p>
   </div>
 <% when "failed" %>
-  <p class="text-red-600 mb-3">CV'ni tahlil qilib bo'lmadi.</p>
-  <%= link_to "Qo'lda davom etish", edit_profile_candidate_onboarding_path,
+  <p class="text-red-600 mb-3">Failed to analyze CV.</p>
+  <%= link_to "Continue manually", edit_profile_candidate_onboarding_path,
       class: "text-teal-700 underline hover:no-underline" %>
 <% when "completed" %>
   <div class="flex flex-col items-center gap-3" data-controller="redirect"
@@ -17,6 +17,6 @@
     <svg class="h-6 w-6 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
-    <p class="text-slate-600">Tayyor! Yo'naltirilyapti...</p>
+    <p class="text-slate-600">Ready! Redirecting...</p>
   </div>
 <% end %>

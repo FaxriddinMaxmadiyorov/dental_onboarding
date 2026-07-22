@@ -76,9 +76,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.boolean "consent_given"
     t.string "country"
     t.datetime "created_at", null: false
+    t.string "cv_filled_fields", default: [], array: true
     t.string "desired_job_function"
     t.decimal "desired_percentage"
     t.decimal "desired_salary"
+    t.string "email"
     t.string "employment_type"
     t.string "first_name"
     t.text "internal_notes"

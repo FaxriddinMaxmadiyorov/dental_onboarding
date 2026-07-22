@@ -1,10 +1,6 @@
 class CvParserService
   # Platformaning fixed job categories (PRD 3.2)
-  PLATFORM_JOB_CATEGORIES = %w[
-    general_dentist dental_hygienist dental_assistant prevention_assistant
-    paro_prevention_assistant orthodontic_assistant front_office
-    practice_manager dental_technician specialist
-  ].freeze
+  PLATFORM_JOB_CATEGORIES = CandidateProfile::JOB_FUNCTIONS.values.freeze
 
   EXTRACTION_SCHEMA = {
     first_name: "string yoki null",

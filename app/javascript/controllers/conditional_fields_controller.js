@@ -28,6 +28,12 @@ export default class extends Controller {
     )
   }
 
+  toggleAverageRevenueField() {
+    const selected = this.jobFunctionTarget.value
+    const show = this.averageRevenueFunctionsValue.includes(selected)
+    this.averageRevenueFieldTarget.classList.toggle("hidden", !show)
+  }
+
   toggleSkillsGroup() {
     const selectedFunction = this.jobFunctionTarget.value
     const activeGroup = this.jobFunctionToSkillGroupValue[selectedFunction]

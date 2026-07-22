@@ -5,6 +5,7 @@ export default class extends Controller {
   static values = { url: String }
 
   connect() {
-    Turbo.visit(this.urlValue)
+    window.history.replaceState({}, "", this.urlValue)
+    Turbo.visit(this.urlValue, { action: "replace" })
   }
 }

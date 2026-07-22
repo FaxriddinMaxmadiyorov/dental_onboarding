@@ -5,6 +5,7 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.string :first_name
       t.string :last_name
       t.string :phone
+      t.string :email
       t.string :city
       t.string :country
       t.string :desired_job_function
@@ -28,6 +29,8 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.text :professional_summary
       t.boolean :consent_given
       t.boolean :onboarding_completed
+
+      t.string :cv_filled_fields, array: true, default: []
 
       t.timestamps
     end

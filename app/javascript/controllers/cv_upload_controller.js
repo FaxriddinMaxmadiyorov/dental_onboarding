@@ -2,7 +2,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "dropzone", "submitButton", "placeholder", "fileInfo", "fileName", "fileSize"]
+  static targets = ["input", "dropzone", "submitButton", "placeholder", "fileInfo", "fileName", "fileSize", "consentCheckbox", "consentError"]
 
   connect() {
     this.dropzoneTarget.addEventListener("click", (e) => {
@@ -14,6 +14,9 @@ export default class extends Controller {
     this.dropzoneTarget.addEventListener("dragover", this.preventAndHighlight.bind(this))
     this.dropzoneTarget.addEventListener("dragleave", this.removeHighlight.bind(this))
     this.dropzoneTarget.addEventListener("drop", this.handleDrop.bind(this))
+
+    this.element.addEventListener("submit", this.handleSubmit.bind(this))
+    this.consentCheckboxTarget.addEventListener("change", () => this.hideConsentError())
   }
 
   preventAndHighlight(event) {
@@ -71,9 +74,26 @@ export default class extends Controller {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
-  submit() {
+  handleSubmit(event) {
+    if (!this.consentCheckboxTarget.checked) {
+      event.preventDefault()
+      this.showConsentError()
+      this.consentCheckboxTarget.focus()
+      return
+    }
+
     this.submitButtonTarget.disabled = true
     this.submitButtonTarget.textContent = "Yuklanmoqda..."
-    this.element.requestSubmit()
   }
+
+  showConsentError() {
+    this.consentErrorTarget.classList.remove("hidden")
+    this.consentCheckboxTarget.classList.add("ring-2", "ring-red-500", "rounded")
+  }
+
+  hideConsentError() {
+    this.consentErrorTarget.classList.add("hidden")
+    this.consentCheckboxTarget.classList.remove("ring-2", "ring-red-500", "rounded")
+  }
+
 }

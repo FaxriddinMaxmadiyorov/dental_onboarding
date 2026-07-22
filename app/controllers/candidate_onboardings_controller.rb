@@ -33,6 +33,12 @@ class CandidateOnboardingsController < ApplicationController
 
   def status
     document = @profile.latest_cv
+
+    if document&.parsing_status == "completed"
+      redirect_to edit_profile_candidate_onboarding_path
+      return
+    end
+
     render :status, locals: { document: document }
   end
 
@@ -42,6 +48,13 @@ class CandidateOnboardingsController < ApplicationController
   end
 
   def update
+    if params[:candidate_profile][:remove_free_text_skill_ids].present?
+      @profile.candidate_skills.where(id: params[:candidate_profile][:remove_free_text_skill_ids]).destroy_all
+    end
+
+    changed_fields = profile_params.keys & CandidateProfile::TRACKABLE_FIELDS
+    @profile.cv_filled_fields -= changed_fields
+
     if @profile.update(profile_params.merge(onboarding_completed: true))
       @profile.validate(:final_save) # trigger stricter validations if desired
       NotifyRecruitmentTeamJob.perform_later(@profile.id)

@@ -2,6 +2,7 @@ class ProfilePrefillService
   def initialize(profile, parsed_data)
     @profile = profile
     @data = parsed_data
+    @filled_fields = []
   end
 
   def call
@@ -19,6 +20,8 @@ class ProfilePrefillService
       fill_skills
       fill_languages
 
+      @profile.cv_filled_fields = (@profile.cv_filled_fields + @filled_fields).uniq
+
       @profile.save!
     end
   end
@@ -28,22 +31,30 @@ class ProfilePrefillService
   # Faqat bo'sh maydonlarni to'ldiramiz — mavjud qiymatlarni bosib
   # yozmaymiz (candidate hali forma to'ldirmagan bo'lishi mumkin).
   def fill_personal_details
-    @profile.first_name ||= @data["first_name"]
-    @profile.last_name  ||= @data["last_name"]
-    @profile.phone      ||= @data["phone"]
-    @profile.city       ||= @data["city"]
-    @profile.country    ||= @data["country"]
+    assign_if_blank(:first_name, @data["first_name"])
+    assign_if_blank(:last_name, @data["last_name"])
+    assign_if_blank(:phone, @data["phone"])
+    assign_if_blank(:city, @data["city"])
+    assign_if_blank(:country, @data["country"])
   end
 
   def fill_job_preferences
     # "Partly" — faqat taxmin sifatida, candidate baribir tasdiqlashi kerak.
-    @profile.desired_job_function ||= @data["desired_job_function_guess"]
+    assign_if_blank(:desired_job_function, @data["desired_job_function_guess"])
   end
 
   def fill_employment_fields
-    @profile.big_number ||= @data["big_number"]
-    @profile.years_of_experience ||= @data["years_of_combined_experience"]
-    @profile.professional_summary ||= @data["professional_summary"]
+    assign_if_blank(:big_number, @data["big_number"])
+    assign_if_blank(:years_of_experience, @data["years_of_combined_experience"])
+    assign_if_blank(:professional_summary, @data["professional_summary"])
+  end
+
+  def assign_if_blank(field, value)
+    return if value.blank?
+    return if @profile.public_send(field).present?
+
+    @profile.public_send("#{field}=", value)
+    @filled_fields << field.to_s
   end
 
   def fill_educations
