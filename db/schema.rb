@@ -51,7 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.string "original_filename"
     t.datetime "parsed_at"
     t.jsonb "parsed_data"
-    t.integer "parsing_status"
+    t.string "parsing_status"
     t.datetime "updated_at", null: false
     t.index ["candidate_profile_id"], name: "index_candidate_documents_on_candidate_profile_id"
   end
@@ -81,7 +81,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.decimal "desired_percentage"
     t.decimal "desired_salary"
     t.string "email"
-    t.string "employment_type"
+    t.string "employment_type", default: [], array: true
     t.string "first_name"
     t.text "internal_notes"
     t.string "last_name"

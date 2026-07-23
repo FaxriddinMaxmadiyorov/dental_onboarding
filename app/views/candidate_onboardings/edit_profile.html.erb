@@ -13,7 +13,7 @@
 
     <% if @profile.errors.any? %>
       <div class="rounded-lg bg-red-50 p-4 text-sm text-red-700">
-        <p class="mb-2 font-medium">Quyidagi xatolarni tuzating:</p>
+        <p class="mb-2 font-medium">Fix the following errors:</p>
         <ul class="list-disc space-y-1 pl-5">
           <% @profile.errors.full_messages.each do |msg| %>
             <li><%= msg %></li>

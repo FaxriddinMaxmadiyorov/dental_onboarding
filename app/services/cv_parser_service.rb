@@ -3,35 +3,35 @@ class CvParserService
   PLATFORM_JOB_CATEGORIES = CandidateProfile::JOB_FUNCTIONS.values.freeze
 
   EXTRACTION_SCHEMA = {
-    first_name: "string yoki null",
-    last_name: "string yoki null",
-    email: "string yoki null",
-    phone: "string yoki null",
-    city: "string yoki null",
-    country: "string yoki null",
-    languages: [{ name: "string", level: "string yoki null - masalan B2, fluent, native" }],
-    desired_job_function_guess: "string yoki null - PLATFORM_JOB_CATEGORIES ro'yxatidan eng yaqinini tanla",
-    big_number: "string yoki null",
-    big_status_guess: "string yoki null",
-    years_of_combined_experience: "integer yoki null",
+    first_name: "string or null",
+    last_name: "string or null",
+    email: "string or null",
+    phone: "string or null",
+    city: "string or null",
+    country: "string or null",
+    languages: [{ name: "string", level: "string or null - ex B2, fluent, native" }],
+    desired_job_function_guess: "string or null - choose guesses from PLATFORM_JOB_CATEGORIES",
+    big_number: "string or null",
+    big_status_guess: "string or null",
+    years_of_combined_experience: "integer or null",
     educations: [{
-      institution: "string yoki null",
+      institution: "string or null",
       study: "string",
-      city_country: "string yoki null",
-      level: "string yoki null - MBO/HBO/Bachelor/Master/Doctor/Course",
-      start_date: "YYYY-MM yoki null",
-      end_date: "YYYY-MM yoki null"
+      city_country: "string or null",
+      level: "string or null - MBO/HBO/Bachelor/Master/Doctor/Course",
+      start_date: "YYYY-MM or null",
+      end_date: "YYYY-MM or null"
     }],
     work_experiences: [{
       job_title: "string",
       company_name: "string",
-      responsibilities: "string yoki null",
-      start_date: "YYYY-MM yoki null",
-      end_date: "YYYY-MM yoki null",
+      responsibilities: "string or null",
+      start_date: "YYYY-MM or null",
+      end_date: "YYYY-MM or null",
       current_job: "boolean"
     }],
     skills: ["string array"],
-    professional_summary: "1-2 gapli xulosa yoki null"
+    professional_summary: "1-2 sentence summary or null"
   }.freeze
 
   class ParsingError < StandardError; end
@@ -189,16 +189,27 @@ class CvParserService
 
   def build_prompt(cv_text)
     <<~PROMPT
-      Extract information from the CV text below and return it as JSON.
+      You are extracting structured candidate data from a CV for a dental recruitment
+      platform. The CV may be written in English or Dutch — read and understand both
+      languages fluently.
 
-      RULES:
-      - Only use information that is EXPLICITLY present in the text. Never invent anything.
-      - If a field is not found, leave it as null or an empty array.
+      CRITICAL RULES:
+      - Only use information that is EXPLICITLY present in the text. NEVER invent, guess,
+        or infer information that is not clearly stated.
+      - If a field is not found in the CV, leave it as null (or an empty array for list
+        fields). An empty or missing field is always preferable to a guessed one.
+      - Every extracted value must map to the correct field in the schema below — do not
+        mix data between fields (e.g. do not put a company name in job_title).
       - For "desired_job_function_guess", only pick from this list: #{PLATFORM_JOB_CATEGORIES.join(', ')}.
-        If nothing matches clearly, leave it null.
+        If nothing matches clearly, leave it null. Do not force a match.
+      - Regardless of the CV's source language, return extracted text values in English
+        where they describe skills, job titles, or field labels — except for proper nouns
+        (person names, company names, institution names, place names), which must stay
+        exactly as written in the original CV.
       - Dates should be in YYYY-MM format (if only a year is given, use YYYY-01).
-      - Include ALL work experiences found in the work_experiences array, not just the most recent one.
-      - Return raw JSON only — no commentary, no markdown code fences.
+      - Include ALL work experiences found in the work_experiences array, not just the
+        most recent one.
+      - Return raw JSON only — no commentary, no markdown code fences, no explanations.
 
       SCHEMA:
       #{JSON.pretty_generate(EXTRACTION_SCHEMA)}

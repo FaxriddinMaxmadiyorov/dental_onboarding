@@ -13,7 +13,7 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.string :transport_type
       t.string :search_status
       t.text :reason_for_looking
-      t.string :employment_type
+      t.string :employment_type, array: true, default: []
       t.decimal :desired_salary
       t.decimal :desired_percentage
       t.decimal :average_daily_revenue

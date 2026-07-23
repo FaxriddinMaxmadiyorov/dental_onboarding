@@ -55,13 +55,18 @@ class CandidateOnboardingsController < ApplicationController
     changed_fields = profile_params.keys & CandidateProfile::TRACKABLE_FIELDS
     @profile.cv_filled_fields -= changed_fields
 
-    if @profile.update(profile_params.merge(onboarding_completed: true))
-      @profile.validate(:final_save) # trigger stricter validations if desired
-      NotifyRecruitmentTeamJob.perform_later(@profile.id)
-      redirect_to root_path, notice: "Profil muvaffaqiyatli saqlandi"
+    @profile.assign_attributes(profile_params.merge(onboarding_completed: true))
+
+    if @profile.valid?(:final_save) && @profile.save
+      NotifyRecruitmentTeamJob.perform_later(@profile.id) if defined?(NotifyRecruitmentTeamJob)
+      redirect_to onboarded_candidate_onboarding_path, notice: "Profile was successfully saved."
     else
       render :edit_profile, status: :unprocessable_entity
     end
+  end
+
+  def onboarded
+    cookies.delete(:candidate_session)
   end
 
   private

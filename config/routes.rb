@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       get :status
       get :status_frame
       get :edit_profile
+      get :onboarded
     end
   end
 end
