@@ -1,5 +1,5 @@
 class CandidateProfile < ApplicationRecord
-  before_create :generate_session_token
+  belongs_to :user
 
   has_many :candidate_documents, dependent: :destroy
   has_many :educations, dependent: :destroy
@@ -97,10 +97,6 @@ class CandidateProfile < ApplicationRecord
   end
 
   private
-
-  def generate_session_token
-    self.session_token = SecureRandom.urlsafe_base64(32)
-  end
 
   def preferred_regions_present
     if preferred_regions.blank?

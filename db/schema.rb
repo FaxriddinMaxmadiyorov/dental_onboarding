@@ -95,11 +95,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.text "professional_summary"
     t.text "reason_for_looking"
     t.string "search_status"
-    t.string "session_token", null: false
     t.string "transport_type"
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.integer "years_of_experience"
-    t.index ["session_token"], name: "index_candidate_profiles_on_session_token", unique: true
+    t.index ["user_id"], name: "index_candidate_profiles_on_user_id"
   end
 
   create_table "candidate_skills", force: :cascade do |t|
@@ -152,6 +152,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.datetime "created_at", null: false
     t.string "email_address", null: false
     t.string "password_digest", null: false
+    t.string "role", default: "candidate", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
@@ -175,6 +176,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
   add_foreign_key "candidate_documents", "candidate_profiles"
   add_foreign_key "candidate_languages", "candidate_profiles"
   add_foreign_key "candidate_languages", "languages"
+  add_foreign_key "candidate_profiles", "users"
   add_foreign_key "candidate_skills", "candidate_profiles"
   add_foreign_key "candidate_skills", "skills"
   add_foreign_key "educations", "candidate_profiles"
