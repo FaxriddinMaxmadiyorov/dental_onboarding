@@ -51,6 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.string "original_filename"
     t.datetime "parsed_at"
     t.jsonb "parsed_data"
+    t.string "parsing_error"
     t.string "parsing_status"
     t.datetime "updated_at", null: false
     t.index ["candidate_profile_id"], name: "index_candidate_documents_on_candidate_profile_id"

@@ -8,6 +8,7 @@ class CreateCandidateDocuments < ActiveRecord::Migration[8.1]
       t.integer :file_size
       t.datetime :parsed_at
       t.string :parsing_status
+      t.string :parsing_error
       t.jsonb :parsed_data
 
       t.timestamps

@@ -4,7 +4,7 @@ class CandidateDocument < ApplicationRecord
 
   ALLOWED_TYPES = %w[application/pdf application/msword
     application/vnd.openxmlformats-officedocument.wordprocessingml.document].freeze
-  MAX_SIZE = ENV.fetch("CV_MAX_SIZE_MB").to_i.megabytes
+  MAX_SIZE = ENV.fetch("CV_MAX_SIZE_MB").to_i
 
   validates :file, presence: true
   validate :acceptable_file
@@ -24,8 +24,8 @@ class CandidateDocument < ApplicationRecord
     unless ALLOWED_TYPES.include?(file.content_type)
       errors.add(:file, "must be a PDF, DOC, or DOCX file")
     end
-    if file.byte_size > MAX_SIZE
-      errors.add(:file, "is too large (max #{MAX_SIZE / 1.megabyte} MB)")
+    if file.byte_size > MAX_SIZE * 1.megabyte
+      errors.add(:file, "is too large (max #{MAX_SIZE} MB)")
     end
   end
 end

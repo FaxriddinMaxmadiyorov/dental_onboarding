@@ -13,6 +13,7 @@ class CvTextExtractor
   ].freeze
 
   class UnsupportedFileTypeError < StandardError; end
+  class CorruptedFileError < StandardError; end
 
   def initialize(document)
     @document = document
@@ -44,18 +45,26 @@ class CvTextExtractor
       reader = PDF::Reader.new(tempfile.path)
       reader.pages.map(&:text).join("\n")
     end
+
+    raise CorruptedFileError, "PDF contains no readable text" if text.blank?
+
+    text
   rescue PDF::Reader::MalformedPDFError => e
     Rails.logger.error("[CvTextExtractor] malformed PDF: #{e.message}")
-    ""
+    raise CorruptedFileError, "PDF file is corrupted or malformed"
   end
 
   def extract_docx
     require "docx"
-    @document.file.blob.open do |tempfile|
+    text = @document.file.blob.open do |tempfile|
       Docx::Document.open(tempfile.path).paragraphs.map(&:text).join("\n")
     end
-  rescue => e
-    Rails.logger.error("[CvTextExtractor] docx extraction failed: #{e.message}")
-    ""
+
+    raise CorruptedFileError, "DOCX contains no readable text" if text.blank?
+
+    text
+  rescue Docx::Errors::MalformedDocumentError, Zip::Error => e
+    Rails.logger.error("[CvTextExtractor] corrupted docx: #{e.message}")
+    raise CorruptedFileError, "DOCX file is corrupted or malformed"
   end
 end

@@ -71,4 +71,3 @@ gem 'dotenv', groups: [:development, :test]
 gem "gemini-ai"
 gem "pdf-reader"
 gem "docx"
-gem 'pry'

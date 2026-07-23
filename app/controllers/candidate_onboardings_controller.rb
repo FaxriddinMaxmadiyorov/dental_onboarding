@@ -15,13 +15,21 @@ class CandidateOnboardingsController < ApplicationController
     end
 
     document = @profile.candidate_documents.build(document_type: "cv")
-    document.file.attach(params.require(:candidate_document)[:file])
+
+    begin
+      document.file.attach(params.require(:candidate_document)[:file])
+    rescue ActionController::ParameterMissing
+      @document = document
+      flash.now[:alert] = "Please select a file to upload."
+      render :upload, status: :unprocessable_entity
+      return
+    end
+
     document.original_filename = document.file.filename.to_s
     document.content_type = document.file.content_type
     document.file_size = document.file.byte_size
 
     if document.save
-      @profile.update!(consent_given: true)
       ParseCandidateCvJob.perform_later(document.id)
       redirect_to status_candidate_onboarding_path
     else

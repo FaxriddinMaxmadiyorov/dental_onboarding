@@ -55,19 +55,22 @@ class CandidateProfile < ApplicationRecord
 
   validates :first_name, :last_name, :email, presence: true, on: :final_save
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, on: :final_save
+  validates :phone, format: { with: /\A\+?[0-9\s\-\(\)]{7,20}\z/, message: "must be a valid phone number" }, on: :final_save
   validates :city, presence: true, on: :final_save
   validates :desired_job_function, presence: true, on: :final_save
   validates :max_travel_time, presence: true, numericality: true, on: :final_save
   validates :search_status, inclusion: { in: SEARCH_STATUSES }, on: :final_save
   validates :years_of_experience, numericality: { greater_than_or_equal_to: 0 }, on: :final_save
   validates :big_number, presence: true, if: -> { big_status == "registered" }, on: :final_save
-  validates :desired_salary, presence: true, if: :shows_salary_field?, on: :final_save
+  validates :average_daily_revenue, numericality: true, if: :shows_average_revenue_field?, on: :final_save
+  validates :desired_salary, presence: true, numericality: { greater_than: 0 }, if: :shows_salary_field?, on: :final_save
   validates :desired_percentage, presence: true, numericality: { in: 0..100 }, if: :shows_percentage_field?, on: :final_save
   validates :available_from, presence: true, on: :final_save
 
   validate :preferred_regions_present, on: :final_save
   validate :employment_type_present, on: :final_save
   validate :available_days_present, on: :final_save
+  validate :available_from_not_in_past, on: :final_save
 
   def shows_big_fields?
     BIG_FUNCTIONS.include?(desired_job_function)
@@ -115,5 +118,10 @@ class CandidateProfile < ApplicationRecord
     if available_days.blank?
       errors.add(:available_days, "Please select at least one available day")
     end
+  end
+
+  def available_from_not_in_past
+    return if available_from.blank?
+    errors.add(:available_from, "can't be in the past") if available_from < Date.current
   end
 end

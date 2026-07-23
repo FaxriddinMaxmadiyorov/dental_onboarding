@@ -6,19 +6,24 @@ class ParseCandidateCvJob < ApplicationJob
     document.processing!
     broadcast_status(document)
 
-    parsed = CvParserService.new(document).call
+    parsed = Timeout.timeout(1) { CvParserService.new(document).call }
+
     document.update!(
       parsed_data: parsed,
-      parsing_status: "completed",
       parsed_at: Time.current
     )
+    document.completed!
 
     ProfilePrefillService.new(document.candidate_profile, parsed).call
 
     broadcast_status(document)
+  rescue Timeout::Error => e
+    Rails.logger.error("CV parsing timed out for document #{document_id}: #{e.message}")
+    document&.update!(parsing_status: "failed", parsing_error: "Processing took too long")
+    broadcast_status(document)
   rescue => e
     Rails.logger.error("CV parsing failed for document #{document_id}: #{e.message}")
-    document.failed!
+    document&.update!(parsing_status: "failed", parsing_error: e.message)
 
     broadcast_status(document)
   end

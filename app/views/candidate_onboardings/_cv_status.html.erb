@@ -8,7 +8,7 @@
     <p class="text-slate-600">Analyzing your CV...</p>
   </div>
 <% when "failed" %>
-  <p class="text-red-600 mb-3">Failed to analyze CV.</p>
+  <p class="text-red-600 mb-3"><%= document.parsing_error %></p>
   <%= link_to "Continue manually", edit_profile_candidate_onboarding_path,
       class: "text-teal-700 underline hover:no-underline" %>
 <% when "completed" %>
