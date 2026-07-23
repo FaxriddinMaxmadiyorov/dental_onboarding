@@ -1,4 +1,5 @@
 class CandidateOnboardingsController < ApplicationController
+  before_action :redirect_admin_to_profiles, only: [:upload]
   before_action :set_profile
 
   def upload
@@ -78,6 +79,10 @@ class CandidateOnboardingsController < ApplicationController
   end
 
   private
+
+  def redirect_admin_to_profiles
+    redirect_to candidate_profiles_path if Current.user.admin?
+  end
 
   def set_profile
     @profile = Current.user.candidate_profile || Current.user.create_candidate_profile

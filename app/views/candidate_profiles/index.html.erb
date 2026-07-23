@@ -1,6 +1,9 @@
+<%# index.html.erb %>
 <div class="mx-auto max-w-4xl px-6 py-10">
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-2xl font-semibold">Candidate profiles</h1>
+    <%= button_to "Logout", logout_path, method: :delete,
+        class: "rounded-lg bg-red-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-700" %>
   </div>
 
   <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
@@ -10,7 +13,6 @@
           <th class="px-4 py-3 font-medium">Name</th>
           <th class="px-4 py-3 font-medium">Job function</th>
           <th class="px-4 py-3 font-medium">Completed at</th>
-          <th class="px-4 py-3 font-medium text-right">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -18,23 +20,11 @@
           <tr class="border-b border-slate-100 last:border-0">
             <td class="px-4 py-3">
               <%= link_to "#{profile.first_name} #{profile.last_name}",
-                  admin_candidate_profile_path(profile),
+                  candidate_profile_path(profile),
                   class: "font-medium text-slate-900 hover:text-teal-700" %>
             </td>
             <td class="px-4 py-3 text-slate-600"><%= profile.desired_job_function %></td>
             <td class="px-4 py-3 text-slate-600"><%= profile.updated_at.strftime("%d.%m.%Y") %></td>
-            <td class="px-4 py-3">
-              <div class="flex items-center justify-end gap-3">
-                <%= link_to "Show", admin_candidate_profile_path(profile),
-                    class: "text-teal-700 hover:underline" %>
-                <%= link_to "Edit", edit_admin_candidate_profile_path(profile),
-                    class: "text-slate-600 hover:underline" %>
-                <%= button_to "Delete", admin_candidate_profile_path(profile),
-                    method: :delete,
-                    form: { data: { turbo_confirm: "Rostdan ham o'chirmoqchimisiz?" } },
-                    class: "text-red-600 hover:underline bg-transparent border-0 p-0 cursor-pointer" %>
-              </div>
-            </td>
           </tr>
         <% end %>
       </tbody>
@@ -42,11 +32,6 @@
   </div>
 
   <% if @profiles.empty? %>
-    <p class="mt-6 text-center text-sm text-slate-500">Hali completed profillar yo'q.</p>
+    <p class="mt-6 text-center text-sm text-slate-500">No completed profiles yet.</p>
   <% end %>
 </div>
-
-<div class="">
-    <%= button_to "Logout", admin_logout_path, method: :delete,
-        class: "rounded-lg bg-red-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-700" %>
-  </div>
