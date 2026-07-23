@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
   def create
     if user = User.authenticate_by(email_address: params[:email_address], password: params[:password])
       start_new_session_for(user)
-      redirect_to root_path
+      redirect_to root_path, notice: "Signed in successfully."
     else
       redirect_to login_path, alert: "Try another email address or password."
     end
@@ -16,6 +16,6 @@ class SessionsController < ApplicationController
 
   def destroy
     terminate_session
-    redirect_to login_path
+    redirect_to login_path, notice: "Signed out successfully."
   end
 end
