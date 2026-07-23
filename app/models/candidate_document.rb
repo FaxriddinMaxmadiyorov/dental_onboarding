@@ -9,6 +9,13 @@ class CandidateDocument < ApplicationRecord
   validates :file, presence: true
   validate :acceptable_file
 
+  enum :parsing_status, {
+    pending: "pending",
+    processing: "processing",
+    completed: "completed",
+    failed: "failed"
+  }, default: :pending
+
   private
 
   def acceptable_file

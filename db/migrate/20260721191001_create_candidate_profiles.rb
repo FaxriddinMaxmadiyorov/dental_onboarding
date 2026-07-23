@@ -26,8 +26,8 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.text :motivation
       t.text :internal_notes
       t.text :professional_summary
-      t.boolean :consent_given
-      t.boolean :onboarding_completed
+      t.boolean :consent_given, default: false
+      t.boolean :onboarding_completed, default: false
 
       t.string :cv_filled_fields, array: true, default: []
       t.string :session_token, null: false

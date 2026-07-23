@@ -51,7 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.string "original_filename"
     t.datetime "parsed_at"
     t.jsonb "parsed_data"
-    t.string "parsing_status"
+    t.integer "parsing_status"
     t.datetime "updated_at", null: false
     t.index ["candidate_profile_id"], name: "index_candidate_documents_on_candidate_profile_id"
   end
@@ -73,7 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.string "big_number"
     t.string "big_status"
     t.string "city"
-    t.boolean "consent_given"
+    t.boolean "consent_given", default: false
     t.string "country"
     t.datetime "created_at", null: false
     t.string "cv_filled_fields", default: [], array: true
@@ -88,7 +88,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.integer "max_travel_time"
     t.text "motivation"
     t.string "notice_period"
-    t.boolean "onboarding_completed"
+    t.boolean "onboarding_completed", default: false
     t.string "phone"
     t.string "preferred_regions"
     t.text "professional_summary"

@@ -3,7 +3,7 @@ class ParseCandidateCvJob < ApplicationJob
 
   def perform(document_id)
     document = CandidateDocument.find(document_id)
-    document.update!(parsing_status: "processing")
+    document.processing!
     broadcast_status(document)
 
     parsed = CvParserService.new(document).call
@@ -18,7 +18,7 @@ class ParseCandidateCvJob < ApplicationJob
     broadcast_status(document)
   rescue => e
     Rails.logger.error("CV parsing failed for document #{document_id}: #{e.message}")
-    document.update!(parsing_status: "failed")
+    document.failed!
 
     broadcast_status(document)
   end
