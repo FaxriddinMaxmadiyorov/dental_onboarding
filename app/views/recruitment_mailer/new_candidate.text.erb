@@ -1,0 +1,11 @@
+New candidate profile completed
+
+<%= @profile.first_name %> <%= @profile.last_name %> has completed the onboarding process.
+
+Email: <%= @profile.email %>
+Phone: <%= @profile.phone %>
+City / Country: <%= @profile.city %>, <%= @profile.country %>
+Desired job function: <%= @profile.desired_job_function&.humanize %>
+Years of experience: <%= @profile.years_of_experience %>
+
+View full profile: <%= @admin_url %>

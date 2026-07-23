@@ -21,6 +21,11 @@ class CandidateProfile < ApplicationRecord
   EMPLOYED_TYPES = %w[employed].freeze
   SELF_EMPLOYED_TYPES = %w[self_employed percentage_based].freeze
   AVERAGE_REVENUE_FUNCTIONS = %w[general_dentist dental_hygienist specialist prevention_assistant].freeze
+  TRACKABLE_FIELDS = %w[
+    first_name last_name email phone city country
+    desired_job_function big_number years_of_experience
+    professional_summary
+  ].freeze
 
   JOB_FUNCTIONS = {
     "General Dentist" => "general_dentist",
@@ -48,15 +53,21 @@ class CandidateProfile < ApplicationRecord
     "dental_technician" => "dental_technician"
   }.freeze
 
-  validates :first_name, :last_name, :email_for_validation_placeholder, presence: true, on: :final_save
-  # Note: email lives on User; validate via delegation if needed.
-
+  validates :first_name, :last_name, :email, presence: true, on: :final_save
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, on: :final_save
   validates :city, presence: true, on: :final_save
   validates :desired_job_function, presence: true, on: :final_save
   validates :max_travel_time, presence: true, numericality: true, on: :final_save
-  validates :years_of_experience, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :desired_percentage, numericality: { in: 0..100 }, allow_nil: true
+  validates :search_status, inclusion: { in: SEARCH_STATUSES }, on: :final_save
+  validates :years_of_experience, numericality: { greater_than_or_equal_to: 0 }, on: :final_save
   validates :big_number, presence: true, if: -> { big_status == "registered" }, on: :final_save
+  validates :desired_salary, presence: true, if: :shows_salary_field?, on: :final_save
+  validates :desired_percentage, presence: true, numericality: { in: 0..100 }, if: :shows_percentage_field?, on: :final_save
+  validates :available_from, presence: true, on: :final_save
+
+  validate :preferred_regions_present, on: :final_save
+  validate :employment_type_present, on: :final_save
+  validate :available_days_present, on: :final_save
 
   def shows_big_fields?
     BIG_FUNCTIONS.include?(desired_job_function)
@@ -86,5 +97,23 @@ class CandidateProfile < ApplicationRecord
 
   def generate_session_token
     self.session_token = SecureRandom.urlsafe_base64(32)
+  end
+
+  def preferred_regions_present
+    if preferred_regions.blank?
+      errors.add(:preferred_regions, "Please select at least one preferred region")
+    end
+  end
+
+  def employment_type_present
+    if employment_type.blank?
+      errors.add(:employment_type, "Please select at least one employment type")
+    end
+  end
+
+  def available_days_present
+    if available_days.blank?
+      errors.add(:available_days, "Please select at least one available day")
+    end
   end
 end

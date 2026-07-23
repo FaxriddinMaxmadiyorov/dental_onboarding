@@ -1,5 +1,4 @@
 <div class="mx-auto max-w-16xl px-6 py-10 w-full">
-
   <div class="mb-8">
     <h1 class="text-2xl font-semibold text-slate-900">Complete your profile</h1>
     <p class="mt-1 text-sm text-slate-500">Review the information we pulled from your CV and fill in what's missing.</p>
@@ -23,6 +22,7 @@
       </div>
     <% end %>
 
+    <%# PERSONAL DETAILS %>
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <h2 class="mb-4 text-base font-semibold text-slate-900">Personal Details</h2>
 
@@ -104,7 +104,7 @@
       </div>
     </section>
 
-
+    <%# JOB PREFERENCES %>
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <h2 class="mb-4 text-base font-semibold text-slate-900">Job Preferences</h2>
 
@@ -121,7 +121,7 @@
       <div class="mb-4">
         <label class="mb-1.5 block text-sm font-medium text-slate-700">Preferred Regions</label>
         <div class="flex flex-wrap gap-4">
-          <% %w[Tashkent Samarkand Bukhara Fergana Namangan Andijan].each do |region| %>
+          <% %w[London Washington Berlin Paris Warsaw Tashkent Samarkand Bukhara Fergana Namangan Andijan].each do |region| %>
             <label class="flex items-center gap-2 text-sm text-slate-700">
               <%= check_box_tag "candidate_profile[preferred_regions][]", region,
                   @profile.preferred_regions&.include?(region),
@@ -131,6 +131,8 @@
           </label>
         <% end %>
       </div>
+
+      <div class="mt-2"></div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-4">
         <div>
@@ -173,6 +175,7 @@
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <h2 class="mb-4 text-base font-semibold text-slate-900">Employment and Compensation</h2>
 
+      <label class="mb-1.5 block text-sm font-medium text-slate-700">Desired Employment Type</label>
       <div class="flex flex-wrap gap-4">
         <% %w[employed self_employed percentage_based].each do |type| %>
           <label class="flex items-center gap-2 text-sm text-slate-700">
@@ -189,29 +192,40 @@
 
       <div data-conditional-fields-target="salaryField"
           class="mt-4 <%= 'hidden' unless @profile.shows_salary_field? %>">
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Desired Salary</label>
         <%= f.number_field :desired_salary, placeholder: "Kutilayotgan maosh",
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
       <div data-conditional-fields-target="percentageField"
           class="mt-4 <%= 'hidden' unless @profile.shows_percentage_field? %>">
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Desired Percentage</label>
         <%= f.number_field :desired_percentage, placeholder: "Foiz (%)",
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
 
       <div data-conditional-fields-target="averageRevenueField"
         class="mt-4 <%= 'hidden' unless @profile.shows_average_revenue_field? %>">
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">O'rtacha kunlik daromad</label>
-        <%= f.number_field :average_daily_revenue, step: 0.01, placeholder: "masalan: 500000",
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">Average Daily Revenue</label>
+        <%= f.number_field :average_daily_revenue, step: 0.01, placeholder: "ex: 500000",
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
 
       <div data-conditional-fields-target="bigSection"
         class="grid grid-cols-1 gap-3 sm:grid-cols-2 <%= 'hidden' unless @profile.shows_big_fields? %>">
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-slate-700">BIG Registration Status</label>
         <%= f.select :big_status, CandidateProfile::BIG_STATUSES, {},
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+      </div>
+
+      <div>
+        <label class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+          BIG Number <%= field_status_label(@profile, :big_number, required: ->(p) { p.big_status == "registered" }) %>
+        </label>
         <%= f.text_field :big_number, placeholder: "BIG raqami",
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
+    </div>
 
       <div class="mb-4">
         <label class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
@@ -311,11 +325,11 @@
       <% end %>
     </section>
 
-
-
+    <%# AVAILABILITY %>
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <h2 class="mb-4 text-base font-semibold text-slate-900">Availability</h2>
 
+      <label class="mb-1.5 block text-sm font-medium text-slate-700">Available Days</label>
       <div class="flex flex-wrap gap-4 mb-5">
         <% %w[Monday Tuesday Wednesday Thursday Friday Saturday Sunday].each do |day| %>
           <label class="flex items-center gap-2 text-sm text-slate-700">
@@ -342,12 +356,7 @@
       </div>
     </section>
 
-    
-
-    
-
-    
-
+    <%# ADDITIONAL INFORMATION %>
     <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <h2 class="mb-4 text-base font-semibold text-slate-900">Additional Information</h2>
 
@@ -364,6 +373,14 @@
           Internal notes for recruitment team (optional)
         </label>
         <%= f.text_area :internal_notes, rows: 3,
+            class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
+      </div>
+
+      <div>
+        <label class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+          Professional Summary
+        </label>
+        <%= f.text_area :professional_summary, rows: 3,
             class: "block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20" %>
       </div>
     </section>

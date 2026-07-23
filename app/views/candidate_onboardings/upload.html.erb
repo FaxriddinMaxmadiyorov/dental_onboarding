@@ -7,11 +7,13 @@
     Admin login
   <% end %>
 </div>
+
 <div class="max-w-xl mx-auto py-12">
   <h1 class="text-2xl font-semibold mb-2">Upload your CV</h1>
+
   <p class="text-gray-600 mb-6">
     We will automatically fill in as much of your candidate profile as
-possible. You can review and edit everything before saving.
+    possible. You can review and edit everything before saving.
   </p>
 
   <% if flash[:alert] %>
@@ -20,11 +22,11 @@ possible. You can review and edit everything before saving.
 
   <%= form_with model: @document, url: upload_cv_candidate_onboarding_path,
       data: { controller: "cv-upload" },
-      html: { novalidate: true, autocomplete: "off" } do |f| %>
+      html: { novalidate: true } do |f| %>
 
     <div data-cv-upload-target="dropzone"
         class="border-2 border-dashed border-slate-300 rounded-lg p-10 text-center cursor-pointer transition hover:border-teal-500 hover:bg-teal-50/30">
-      <%= f.file_field :file, data: {
+        <%= f.file_field :file, data: {
             cv_upload_target: "input",
             action: "change->cv-upload#fileSelected"
           }, accept: ".pdf,.doc,.docx", class: "hidden" %>
@@ -44,7 +46,7 @@ possible. You can review and edit everything before saving.
         <p data-cv-upload-target="fileSize" class="text-xs text-slate-500 mt-1"></p>
         <button type="button" data-action="cv-upload#clearFile"
             class="mt-2 text-xs text-red-600 hover:underline">
-          Boshqa fayl tanlash
+          Choose a different file
         </button>
       </div>
     </div>
@@ -70,6 +72,5 @@ possible. You can review and edit everything before saving.
   <% end %>
 
   <%= link_to "Enter details manually", edit_profile_candidate_onboarding_path,
-      class: "block text-center text-sm text-gray-500 mt-4" %>
+              class: "block text-center text-sm text-gray-500 mt-4" %>
 </div>
-

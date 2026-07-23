@@ -83,7 +83,7 @@ class CandidateOnboardingsController < ApplicationController
 
   def profile_params
     params.require(:candidate_profile).permit(
-      :first_name, :last_name, :phone, :city, :country,
+      :first_name, :last_name, :email, :phone, :city, :country,
       :desired_job_function, :max_travel_time, :search_status, :reason_for_looking,
       :desired_salary, :desired_percentage, :average_daily_revenue,
       :big_status, :big_number, :years_of_experience,

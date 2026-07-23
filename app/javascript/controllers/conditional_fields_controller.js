@@ -1,16 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["jobFunction", "employmentType", "bigSection", "salaryField", "percentageField", "skillsGroup"]
+  static targets = ["jobFunction", "employmentType", "bigSection", "salaryField", "percentageField", "skillsGroup", "averageRevenueField"]
   static values = {
     bigFunctions: Array,
-    jobFunctionToSkillGroup: Object // { "general_dentist": "dentist", ... }
+    jobFunctionToSkillGroup: Object,
+    averageRevenueFunctions: Array
   }
 
   connect() {
     this.toggleBigFields()
     this.toggleEmploymentFields()
     this.toggleSkillsGroup()
+    this.toggleAverageRevenueField()
   }
 
   toggleBigFields() {
@@ -29,6 +31,10 @@ export default class extends Controller {
   }
 
   toggleAverageRevenueField() {
+    console.log("toggleAverageRevenueField called")
+    console.log("jobFunctionTarget:", this.jobFunctionTarget)
+    console.log("averageRevenueFunctionsValue:", this.averageRevenueFunctionsValue)
+    console.log("averageRevenueFieldTarget:", this.averageRevenueFieldTarget)
     const selected = this.jobFunctionTarget.value
     const show = this.averageRevenueFunctionsValue.includes(selected)
     this.averageRevenueFieldTarget.classList.toggle("hidden", !show)
