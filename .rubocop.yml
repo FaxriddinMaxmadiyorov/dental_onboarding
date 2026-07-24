@@ -38,3 +38,7 @@ Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
     - "config/**/*"
+
+Rails/StrongParametersExpect:
+  Enabled: false
+
