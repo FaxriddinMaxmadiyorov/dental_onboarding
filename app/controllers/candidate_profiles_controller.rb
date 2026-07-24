@@ -16,14 +16,19 @@ class CandidateProfilesController < ApplicationController
   end
 
   def update
+    authorize @profile
+
     if profile_params[:remove_free_text_skill_ids].present?
       @profile.candidate_skills.where(id: profile_params[:remove_free_text_skill_ids]).destroy_all
     end
 
+    attrs = profile_params.except(:remove_free_text_skill_ids)
+    @profile.assign_attributes(attrs)
+
     if @profile.valid?(:final_save) && @profile.save
-      redirect_to candidate_profiles_path, notice: "Profile was successfully saved."
+      redirect_to candidate_profiles_path, notice: 'Profile was successfully saved.'
     else
-      render :edit_profile, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -31,7 +36,7 @@ class CandidateProfilesController < ApplicationController
     authorize @profile
 
     @profile.destroy
-    redirect_to candidate_profiles_url, notice: "Profile was successfully deleted."
+    redirect_to candidate_profiles_url, notice: 'Profile was successfully deleted.'
   end
 
   private
@@ -49,11 +54,11 @@ class CandidateProfilesController < ApplicationController
       :available_from, :notice_period, :motivation, :internal_notes,
       :professional_summary, :consent_given,
       preferred_regions: [], transport_type: [], employment_type: [], available_days: [],
-      educations_attributes: [:id, :institution, :study, :city_country, :level,
-                               :start_date, :end_date, :_destroy],
-      work_experiences_attributes: [:id, :job_title, :company_name, :responsibilities,
-                                     :start_date, :end_date, :current_job, :_destroy],
-      candidate_languages_attributes: [:id, :language_id, :level, :_destroy],
+      educations_attributes: %i[id institution study city_country level
+                                start_date end_date _destroy],
+      work_experiences_attributes: %i[id job_title company_name responsibilities
+                                      start_date end_date current_job _destroy],
+      candidate_languages_attributes: %i[id language_id level _destroy],
       skill_ids: [], remove_free_text_skill_ids: []
     )
   end

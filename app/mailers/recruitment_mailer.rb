@@ -1,5 +1,5 @@
 class RecruitmentMailer < ApplicationMailer
-  default from: "onboarding@dentalplatform.com"
+  default from: 'onboarding@dentalplatform.com'
 
   def new_candidate(profile)
     @profile = profile
@@ -14,6 +14,6 @@ class RecruitmentMailer < ApplicationMailer
   private
 
   def recruitment_team_email
-    ENV.fetch("RECRUITMENT_TEAM_EMAIL", "recruitment@dentalplatform.com")
+    ENV.fetch('RECRUITMENT_TEAM_EMAIL', 'recruitment@dentalplatform.com')
   end
 end

@@ -19,11 +19,11 @@ class ParseCandidateCvJob < ApplicationJob
     broadcast_status(document)
   rescue Timeout::Error => e
     Rails.logger.error("CV parsing timed out for document #{document_id}: #{e.message}")
-    document&.update!(parsing_status: "failed", parsing_error: "Processing took too long")
+    document&.update!(parsing_status: 'failed', parsing_error: 'Processing took too long')
     broadcast_status(document)
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("CV parsing failed for document #{document_id}: #{e.message}")
-    document&.update!(parsing_status: "failed", parsing_error: e.message)
+    document&.update!(parsing_status: 'failed', parsing_error: e.message)
 
     broadcast_status(document)
   end
@@ -33,8 +33,8 @@ class ParseCandidateCvJob < ApplicationJob
   def broadcast_status(document)
     Turbo::StreamsChannel.broadcast_replace_to(
       "cv_status_#{document.candidate_profile_id}",
-      target: "cv_status",
-      partial: "candidate_onboardings/cv_status",
+      target: 'cv_status',
+      partial: 'candidate_onboardings/cv_status',
       locals: { document: document }
     )
   end

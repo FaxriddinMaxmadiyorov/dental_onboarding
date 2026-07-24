@@ -1,10 +1,5 @@
-require "pdf-reader"
+require 'pdf-reader'
 
-# Extracts raw text from an uploaded CandidateDocument (PDF, DOC, or DOCX).
-#
-# Usage:
-#   CvTextExtractor.new(candidate_document).call
-#   # => String (may be blank if the file has no extractable text)
 class CvTextExtractor
   SUPPORTED_TYPES = %w[
     application/pdf
@@ -20,16 +15,16 @@ class CvTextExtractor
   end
 
   def call
-    raise UnsupportedFileTypeError, "no file attached" unless @document.file.attached?
+    raise UnsupportedFileTypeError, 'no file attached' unless @document.file.attached?
 
     case @document.content_type
-    when "application/pdf"
+    when 'application/pdf'
       extract_pdf
-    when "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    when 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       extract_docx
-    when "application/msword"
-      Rails.logger.warn("[CvTextExtractor] legacy .doc format is not supported for text extraction")
-      ""
+    when 'application/msword'
+      Rails.logger.warn('[CvTextExtractor] legacy .doc format is not supported for text extraction')
+      ''
     else
       raise UnsupportedFileTypeError, "unsupported content type: #{@document.content_type}"
     end
@@ -40,28 +35,28 @@ class CvTextExtractor
   def extract_pdf
     text = @document.file.blob.open do |tempfile|
       reader = PDF::Reader.new(tempfile.path)
-      reader.pages.map(&:text).join("\n")
+      reader.pages.map(&:text).join('\n')
     end
 
-    raise CorruptedFileError, "PDF contains no readable text" if text.blank?
+    raise CorruptedFileError, 'PDF contains no readable text' if text.blank?
 
     text
   rescue PDF::Reader::MalformedPDFError => e
     Rails.logger.error("[CvTextExtractor] malformed PDF: #{e.message}")
-    raise CorruptedFileError, "PDF file is corrupted or malformed"
+    raise CorruptedFileError, 'PDF file is corrupted or malformed'
   end
 
   def extract_docx
-    require "docx"
+    require 'docx'
     text = @document.file.blob.open do |tempfile|
-      Docx::Document.open(tempfile.path).paragraphs.map(&:text).join("\n")
+      Docx::Document.open(tempfile.path).paragraphs.map(&:text).join('\n')
     end
 
-    raise CorruptedFileError, "DOCX contains no readable text" if text.blank?
+    raise CorruptedFileError, 'DOCX contains no readable text' if text.blank?
 
     text
   rescue Zip::Error => e
     Rails.logger.error("[CvTextExtractor] corrupted docx: #{e.message}")
-    raise CorruptedFileError, "DOCX file is corrupted or malformed"
+    raise CorruptedFileError, 'DOCX file is corrupted or malformed'
   end
 end

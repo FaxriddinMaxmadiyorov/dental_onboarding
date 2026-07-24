@@ -2,35 +2,35 @@ class CvParserService
   PLATFORM_JOB_CATEGORIES = CandidateProfile::JOB_FUNCTIONS.values.freeze
 
   EXTRACTION_SCHEMA = {
-    first_name: "string or null",
-    last_name: "string or null",
-    email: "string or null",
-    phone: "string or null",
-    city: "string or null",
-    country: "string or null",
-    languages: [{ name: "string", level: "string or null - ex B2, fluent, native" }],
-    desired_job_function_guess: "string or null - choose guesses from PLATFORM_JOB_CATEGORIES",
-    big_number: "string or null",
-    big_status_guess: "string or null",
-    years_of_combined_experience: "integer or null",
+    first_name: 'string or null',
+    last_name: 'string or null',
+    email: 'string or null',
+    phone: 'string or null',
+    city: 'string or null',
+    country: 'string or null',
+    languages: [{ name: 'string', level: 'string or null - ex B2, fluent, native' }],
+    desired_job_function_guess: 'string or null - choose guesses from PLATFORM_JOB_CATEGORIES',
+    big_number: 'string or null',
+    big_status_guess: 'string or null',
+    years_of_combined_experience: 'integer or null',
     educations: [{
-      institution: "string or null",
-      study: "string",
-      city_country: "string or null",
-      level: "string or null - MBO/HBO/Bachelor/Master/Doctor/Course",
-      start_date: "YYYY-MM or null",
-      end_date: "YYYY-MM or null"
+      institution: 'string or null',
+      study: 'string',
+      city_country: 'string or null',
+      level: 'string or null - MBO/HBO/Bachelor/Master/Doctor/Course',
+      start_date: 'YYYY-MM or null',
+      end_date: 'YYYY-MM or null'
     }],
     work_experiences: [{
-      job_title: "string",
-      company_name: "string",
-      responsibilities: "string or null",
-      start_date: "YYYY-MM or null",
-      end_date: "YYYY-MM or null",
-      current_job: "boolean"
+      job_title: 'string',
+      company_name: 'string',
+      responsibilities: 'string or null',
+      start_date: 'YYYY-MM or null',
+      end_date: 'YYYY-MM or null',
+      current_job: 'boolean'
     }],
-    skills: ["string array"],
-    professional_summary: "1-2 sentence summary or null"
+    skills: ['string array'],
+    professional_summary: '1-2 sentence summary or null'
   }.freeze
 
   class ParsingError < StandardError; end
@@ -64,9 +64,9 @@ class CvParserService
     CvTextExtractor.new(@document).call
   rescue CvTextExtractor::CorruptedFileError => e
     raise ParsingError, "CV file could not be read: #{e.message}"
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("[CvParserService] text extraction failed: #{e.message}")
-    raise ParsingError, "CV file could not be processed"
+    raise ParsingError, 'CV file could not be processed'
   end
 
   # ---------- 2. Request to Gemini API ----------
@@ -77,11 +77,11 @@ class CvParserService
     body = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
-        response_mime_type: "application/json"
+        response_mime_type: 'application/json'
       }
     }
 
-    response = Net::HTTP.post(uri, body.to_json, "Content-Type" => "application/json")
+    response = Net::HTTP.post(uri, body.to_json, 'Content-Type' => 'application/json')
 
     unless response.is_a?(Net::HTTPSuccess)
       raise ParsingError, "Gemini API wrong response: #{response.code} #{response.body}"
@@ -91,21 +91,21 @@ class CvParserService
   end
 
   def api_key
-    ENV.fetch("GEMINI_API_KEY")
+    ENV.fetch('GEMINI_API_KEY')
   end
 
   def gemini_url
-    ENV.fetch("GEMINI_URL")
+    ENV.fetch('GEMINI_URL')
   end
 
   # ---------- 3. Response from Gemini ----------
 
   def extract_json_text(gemini_response)
-    text = gemini_response.dig("candidates", 0, "content", "parts", 0, "text")
-    raise ParsingError, "Gemini response does not contain text" if text.blank?
+    text = gemini_response.dig('candidates', 0, 'content', 'parts', 0, 'text')
+    raise ParsingError, 'Gemini response does not contain text' if text.blank?
 
     # Ehtiyot chorasi: ba'zan model ```json bilan o'rab qaytarishi mumkin
-    text.gsub(/\A```json\n?/, "").gsub(/```\z/, "").strip
+    text.gsub(/\A```json\n?/, '').gsub(/```\z/, '').strip
   end
 
   # ---------- 4. Prompt qurish ----------
@@ -158,21 +158,21 @@ class CvParserService
 
   def empty_result
     {
-      "first_name" => nil,
-      "last_name" => nil,
-      "email" => nil,
-      "phone" => nil,
-      "city" => nil,
-      "country" => nil,
-      "languages" => [],
-      "desired_job_function_guess" => nil,
-      "big_number" => nil,
-      "big_status_guess" => nil,
-      "years_of_combined_experience" => nil,
-      "educations" => [],
-      "work_experiences" => [],
-      "skills" => [],
-      "professional_summary" => nil
+      'first_name' => nil,
+      'last_name' => nil,
+      'email' => nil,
+      'phone' => nil,
+      'city' => nil,
+      'country' => nil,
+      'languages' => [],
+      'desired_job_function_guess' => nil,
+      'big_number' => nil,
+      'big_status_guess' => nil,
+      'years_of_combined_experience' => nil,
+      'educations' => [],
+      'work_experiences' => [],
+      'skills' => [],
+      'professional_summary' => nil
     }
   end
 end

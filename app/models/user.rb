@@ -5,10 +5,10 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
 
   validates :email_address, presence: true, uniqueness: true,
-            format: { with: URI::MailTo::EMAIL_REGEXP }
+                            format: { with: URI::MailTo::EMAIL_REGEXP }
 
   enum :role, {
-    candidate: "candidate",
-    admin: "admin"
+    candidate: 'candidate',
+    admin: 'admin'
   }
 end
