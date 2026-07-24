@@ -68,7 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
   end
 
   create_table "candidate_profiles", force: :cascade do |t|
-    t.string "available_days"
+    t.string "available_days", default: [], array: true
     t.date "available_from"
     t.decimal "average_daily_revenue"
     t.string "big_number"
@@ -91,11 +91,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_192302) do
     t.string "notice_period"
     t.boolean "onboarding_completed", default: false
     t.string "phone"
-    t.string "preferred_regions"
+    t.string "preferred_regions", default: [], array: true
     t.text "professional_summary"
     t.text "reason_for_looking"
     t.string "search_status"
-    t.string "transport_type"
+    t.string "transport_type", default: [], array: true
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.integer "years_of_experience"

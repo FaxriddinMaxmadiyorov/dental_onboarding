@@ -41,7 +41,7 @@ class CvTextExtractor
   private
 
   def extract_pdf
-    @document.file.blob.open do |tempfile|
+    text = @document.file.blob.open do |tempfile|
       reader = PDF::Reader.new(tempfile.path)
       reader.pages.map(&:text).join("\n")
     end

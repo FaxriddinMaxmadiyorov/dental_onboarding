@@ -1,0 +1,9 @@
+<div class="mx-auto max-w-3xl px-6 py-10">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-xl font-semibold text-slate-900">My Profile</h1>
+    <%= link_to "Edit", edit_profile_candidate_onboarding_path,
+        class: "rounded-lg bg-teal-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-teal-700" %>
+  </div>
+
+  <%= render 'shared/profile_details' %>
+</div>

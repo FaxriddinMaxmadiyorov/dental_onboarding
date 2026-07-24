@@ -9,9 +9,9 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.string :city
       t.string :country
       t.string :desired_job_function
-      t.string :preferred_regions
+      t.string :preferred_regions, array: true, default: []
       t.integer :max_travel_time
-      t.string :transport_type
+      t.string :transport_type, array: true, default: []
       t.string :search_status
       t.text :reason_for_looking
       t.string :employment_type, array: true, default: []
@@ -21,7 +21,7 @@ class CreateCandidateProfiles < ActiveRecord::Migration[8.1]
       t.string :big_status
       t.string :big_number
       t.integer :years_of_experience
-      t.string :available_days
+      t.string :available_days, array: true, default: []
       t.date :available_from
       t.string :notice_period
       t.text :motivation

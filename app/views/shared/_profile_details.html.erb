@@ -1,0 +1,125 @@
+
+  <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 space-y-6">
+    <div>
+      <h1 class="text-xl font-semibold text-slate-900"><%= @profile.first_name %> <%= @profile.last_name %></h1>
+      <p class="text-sm text-slate-500"><%= @profile.desired_job_function&.humanize %></p>
+    </div>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Personal Details</h2>
+      <dl class="grid grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-slate-500">Email</dt><dd><%= @profile.email %></dd></div>
+        <div><dt class="text-slate-500">Phone</dt><dd><%= @profile.phone %></dd></div>
+        <div><dt class="text-slate-500">City</dt><dd><%= @profile.city %></dd></div>
+        <div><dt class="text-slate-500">Country</dt><dd><%= @profile.country %></dd></div>
+      </dl>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Job Preferences</h2>
+      <dl class="grid grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-slate-500">Preferred regions</dt><dd><%= @profile.preferred_regions&.join(", ") %></dd></div>
+        <div><dt class="text-slate-500">Max travel time</dt><dd><%= @profile.max_travel_time %> min</dd></div>
+        <div><dt class="text-slate-500">Transport</dt><dd><%= @profile.transport_type&.join(", ") %></dd></div>
+        <div><dt class="text-slate-500">Search status</dt><dd><%= @profile.search_status&.humanize %></dd></div>
+      </dl>
+      <% if @profile.reason_for_looking.present? %>
+        <p class="mt-2 text-sm text-slate-600"><%= @profile.reason_for_looking %></p>
+      <% end %>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Employment & Compensation</h2>
+      <dl class="grid grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-slate-500">Employment type</dt><dd><%= @profile.employment_type&.join(", ") %></dd></div>
+        <div><dt class="text-slate-500">Years of experience</dt><dd><%= @profile.years_of_experience %></dd></div>
+        <% if @profile.desired_salary.present? %>
+          <div><dt class="text-slate-500">Desired salary</dt><dd><%= @profile.desired_salary %></dd></div>
+        <% end %>
+        <% if @profile.desired_percentage.present? %>
+          <div><dt class="text-slate-500">Desired percentage</dt><dd><%= @profile.desired_percentage %>%</dd></div>
+        <% end %>
+        <% if @profile.average_daily_revenue.present? %>
+          <div><dt class="text-slate-500">Avg daily revenue</dt><dd><%= @profile.average_daily_revenue %></dd></div>
+        <% end %>
+        <% if @profile.big_status.present? %>
+          <div><dt class="text-slate-500">BIG status</dt><dd><%= @profile.big_status&.humanize %></dd></div>
+          <div><dt class="text-slate-500">BIG number</dt><dd><%= @profile.big_number %></dd></div>
+        <% end %>
+      </dl>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Education</h2>
+      <ul class="space-y-1 text-sm text-slate-700">
+        <% @profile.educations.each do |edu| %>
+          <li><strong><%= edu.study %></strong> — <%= edu.institution %> (<%= edu.level %>)</li>
+        <% end %>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Work Experience</h2>
+      <ul class="space-y-2 text-sm text-slate-700">
+        <% @profile.work_experiences.each do |we| %>
+          <li>
+            <strong><%= we.job_title %></strong> — <%= we.company_name %>
+            <% if we.current_job? %><span class="text-xs text-teal-600">(current)</span><% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Skills</h2>
+      <div class="flex flex-wrap gap-2">
+        <% @profile.skills.each do |skill| %>
+          <span class="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-700"><%= skill.name %></span>
+        <% end %>
+        <% @profile.candidate_skills.where(skill_id: nil).each do |cs| %>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"><%= cs.free_text_suggestion %></span>
+        <% end %>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Languages</h2>
+      <ul class="space-y-1 text-sm text-slate-700">
+        <% @profile.candidate_languages.each do |cl| %>
+          <li><%= cl.language.name %> — <%= cl.level %></li>
+        <% end %>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="mb-2 text-sm font-semibold text-slate-900">Availability</h2>
+      <dl class="grid grid-cols-2 gap-3 text-sm">
+        <div><dt class="text-slate-500">Available days</dt><dd><%= @profile.available_days&.join(", ") %></dd></div>
+        <div><dt class="text-slate-500">Available from</dt><dd><%= @profile.available_from %></dd></div>
+        <% if @profile.notice_period.present? %>
+          <div><dt class="text-slate-500">Notice period</dt><dd><%= @profile.notice_period %></dd></div>
+        <% end %>
+      </dl>
+    </section>
+
+    <% if @profile.professional_summary.present? %>
+      <section>
+        <h2 class="mb-2 text-sm font-semibold text-slate-900">Professional Summary</h2>
+        <p class="text-sm text-slate-700"><%= @profile.professional_summary %></p>
+      </section>
+    <% end %>
+
+    <% if @profile.motivation.present? %>
+      <section>
+        <h2 class="mb-2 text-sm font-semibold text-slate-900">Motivation</h2>
+        <p class="text-sm text-slate-700"><%= @profile.motivation %></p>
+      </section>
+    <% end %>
+
+    <% if @profile.internal_notes.present? %>
+      <section class="border-t border-slate-100 pt-4">
+        <h2 class="mb-2 text-sm font-semibold text-slate-900">Internal Notes (recruiter only)</h2>
+        <p class="text-sm text-slate-700"><%= @profile.internal_notes %></p>
+      </section>
+    <% end %>
+  </div>

@@ -1,0 +1,15 @@
+<div class="mx-auto max-w-3xl px-6 py-10">
+  <div class="mb-6 flex items-center justify-between">
+    <%= link_to "← Back to list", candidate_profiles_path, class: "text-sm text-slate-500 hover:underline" %>
+    <div class="flex gap-3">
+      <%= link_to "Edit", edit_candidate_profile_path(@profile),
+          class: "rounded-lg bg-teal-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-teal-700" %>
+      <%= button_to "Delete", candidate_profile_path(@profile),
+          method: :delete,
+          form: { data: { turbo_confirm: "Are you sure?" } },
+          class: "rounded-lg bg-red-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-red-700" %>
+    </div>
+  </div>
+
+  <%= render 'shared/profile_details' %>
+</div>

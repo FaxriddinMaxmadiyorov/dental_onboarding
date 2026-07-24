@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
 
-  resources :candidate_profiles, only: [:index, :show]
+  resources :candidate_profiles, only: [:index, :show, :edit, :update, :destroy]
   resource :candidate_onboarding, only: [:show, :update] do
     member do
       get :upload
@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       get :status
       get :edit_profile
       get :onboarded
+      get :profile
     end
   end
 end

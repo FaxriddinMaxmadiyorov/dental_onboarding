@@ -57,8 +57,8 @@ class CandidateOnboardingsController < ApplicationController
   end
 
   def update
-    if params[:candidate_profile][:remove_free_text_skill_ids].present?
-      @profile.candidate_skills.where(id: params[:candidate_profile][:remove_free_text_skill_ids]).destroy_all
+    if profile_params[:remove_free_text_skill_ids].present?
+      @profile.candidate_skills.where(id: profile_params[:remove_free_text_skill_ids]).destroy_all
     end
 
     changed_fields = profile_params.keys & CandidateProfile::TRACKABLE_FIELDS
@@ -78,6 +78,9 @@ class CandidateOnboardingsController < ApplicationController
     cookies.delete(:candidate_session)
   end
 
+  def profile
+  end
+
   private
 
   def redirect_admin_to_profiles
@@ -85,7 +88,7 @@ class CandidateOnboardingsController < ApplicationController
   end
 
   def set_profile
-    @profile = Current.user.candidate_profile || Current.user.create_candidate_profile
+    @profile = CandidateProfile.find_or_create_by!(user_id: Current.user.id)
   end
 
   def profile_params
@@ -102,7 +105,7 @@ class CandidateOnboardingsController < ApplicationController
       work_experiences_attributes: [:id, :job_title, :company_name, :responsibilities,
                                      :start_date, :end_date, :current_job, :_destroy],
       candidate_languages_attributes: [:id, :language_id, :level, :_destroy],
-      skill_ids: []
+      skill_ids: [], remove_free_text_skill_ids: []
     )
   end
 end

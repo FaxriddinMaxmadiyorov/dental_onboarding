@@ -6,6 +6,7 @@ class ProfilePrefillService
   end
 
   def call
+    Rails.logger.info "DDDDDD --- #{@data.inspect}"
     ActiveRecord::Base.transaction do
       # CV qayta yuklanganda avvalgi CV'dan kelgan yozuvlarni tozalaymiz
       # (candidate qo'lda qo'shgan yozuvlarga tegmaymiz — ular from_cv: false).
@@ -49,13 +50,20 @@ class ProfilePrefillService
     assign_if_blank(:professional_summary, @data["professional_summary"])
   end
 
-  def assign_if_blank(field, value)
-    return if value.blank?
-    return if @profile.public_send(field).present?
+  # app/services/profile_prefill_service.rb
+def assign_if_blank(field, value)
+  return if value.blank?
 
-    @profile.public_send("#{field}=", value)
-    @filled_fields << field.to_s
-  end
+  current_value_present = @profile.public_send(field).present?
+  came_from_previous_cv = @profile.field_from_cv?(field)
+
+  # Faqat quyidagi holatda YOZMAYMIZ: maydon to'ldirilgan VA u candidate
+  # tomonidan QO'LDA kiritilgan (CV'dan kelmagan).
+  return if current_value_present && !came_from_previous_cv
+
+  @profile.public_send("#{field}=", value)
+  @filled_fields << field.to_s
+end
 
   def fill_educations
     Array(@data["educations"]).each do |edu|

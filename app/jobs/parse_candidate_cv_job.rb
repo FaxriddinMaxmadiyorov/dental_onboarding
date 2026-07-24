@@ -6,7 +6,7 @@ class ParseCandidateCvJob < ApplicationJob
     document.processing!
     broadcast_status(document)
 
-    parsed = Timeout.timeout(1) { CvParserService.new(document).call }
+    parsed = Timeout.timeout(20) { CvParserService.new(document).call }
 
     document.update!(
       parsed_data: parsed,

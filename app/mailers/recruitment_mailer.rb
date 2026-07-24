@@ -3,7 +3,7 @@ class RecruitmentMailer < ApplicationMailer
 
   def new_candidate(profile)
     @profile = profile
-    @admin_url = admin_candidate_profile_url(@profile, host: default_url_options[:host])
+    @admin_url = candidate_profile_url(@profile, host: default_url_options[:host])
 
     mail(
       to: recruitment_team_email,

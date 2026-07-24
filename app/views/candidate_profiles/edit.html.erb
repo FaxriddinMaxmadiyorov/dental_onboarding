@@ -1,0 +1,20 @@
+<div class="mx-auto px-6 py-10 w-full">
+  <%= link_to "← Back", candidate_profile_path(@profile), class: "mb-6 inline-block text-sm text-slate-500 hover:underline" %>
+
+  <h1 class="mb-4 text-2xl font-semibold">Edit candidate profile</h1>
+
+  <%= form_with model: @profile, url: candidate_profile_path(@profile), method: :patch,
+      class: "space-y-6",
+      data: { controller: "conditional-fields",
+              conditional_fields_big_functions_value: CandidateProfile::BIG_FUNCTIONS.to_json,
+              conditional_fields_job_function_to_skill_group_value: CandidateProfile::JOB_FUNCTION_TO_SKILL_GROUP.to_json,
+              conditional_fields_average_revenue_functions_value: CandidateProfile::AVERAGE_REVENUE_FUNCTIONS.to_json } do |f| %>
+
+    <%= render "candidate_profiles/form_fields", f: f, profile: @profile %>
+
+    <div class="flex justify-end">
+      <%= f.submit "Save",
+          class: "cursor-pointer rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-teal-700" %>
+    </div>
+  <% end %>
+</div>
