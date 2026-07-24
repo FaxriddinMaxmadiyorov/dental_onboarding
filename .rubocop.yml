@@ -33,3 +33,8 @@ Metrics/MethodLength:
 
 Metrics/ClassLength:
   Max: 200
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "config/**/*"
