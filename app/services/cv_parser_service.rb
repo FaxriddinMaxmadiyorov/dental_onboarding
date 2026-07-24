@@ -1,5 +1,4 @@
 class CvParserService
-  # Platformaning fixed job categories (PRD 3.2)
   PLATFORM_JOB_CATEGORIES = CandidateProfile::JOB_FUNCTIONS.values.freeze
 
   EXTRACTION_SCHEMA = {
@@ -59,7 +58,7 @@ class CvParserService
 
   private
 
-  # ---------- 1. Matnni faylni o'zidan olish ----------
+  # ---------- 1. Retrieve text from document ----------
 
   def extract_text
     CvTextExtractor.new(@document).call
@@ -70,7 +69,7 @@ class CvParserService
     raise ParsingError, "CV file could not be processed"
   end
 
-  # ---------- 2. Gemini API'ga so'rov ----------
+  # ---------- 2. Request to Gemini API ----------
 
   def call_gemini(prompt)
     uri = URI("#{gemini_url}?key=#{api_key}")
@@ -99,11 +98,11 @@ class CvParserService
     ENV.fetch("GEMINI_URL")
   end
 
-  # ---------- 3. Javobdan matn ajratib olish ----------
+  # ---------- 3. Response from Gemini ----------
 
   def extract_json_text(gemini_response)
     text = gemini_response.dig("candidates", 0, "content", "parts", 0, "text")
-    raise ParsingError, "Gemini javobida matn topilmadi" if text.blank?
+    raise ParsingError, "Gemini response does not contain text" if text.blank?
 
     # Ehtiyot chorasi: ba'zan model ```json bilan o'rab qaytarishi mumkin
     text.gsub(/\A```json\n?/, "").gsub(/```\z/, "").strip
@@ -145,12 +144,12 @@ class CvParserService
     PROMPT
   end
 
-  # ---------- 5. Xavfsiz normalizatsiya ----------
+  # ---------- 5. Safe Normalization ----------
 
-  # Gemini har doim schema'ga to'liq rioya qilmasligi mumkin (masalan
-  # ba'zi kalitlar tushib qolishi), shuning uchun natijani empty_result
-  # ustiga "deep merge" qilib, hech qachon kutilmagan struktura tufayli
-  # keyingi kodda NoMethodError chiqmasligini ta'minlaymiz.
+  # Given the parsed data, ensure all expected fields are present and have the correct types.
+  # If a field is missing, fill it with null (or an empty array for list fields).
+  # If a field is present but has a null value, keep it as null.
+  # This ensures that the final output always conforms to the expected schema.
   def symbolize_and_stringify_safely(data)
     empty_result.merge(data) do |_key, default_val, parsed_val|
       parsed_val.nil? ? default_val : parsed_val

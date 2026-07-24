@@ -3,14 +3,13 @@ class CandidateOnboardingsController < ApplicationController
   before_action :set_profile
 
   def upload
-    # renders CV upload screen
     @document = @profile.candidate_documents.build(document_type: "cv")
   end
 
   def upload_cv
     unless params[:consent].present?
       @document = @profile.candidate_documents.build(document_type: "cv")
-      flash.now[:alert] = "Davom etish uchun ma'lumotlarni qayta ishlashga rozilik berishingiz kerak."
+      flash.now[:alert] = "To continue, please provide consent."
       render :upload, status: :unprocessable_entity
       return
     end

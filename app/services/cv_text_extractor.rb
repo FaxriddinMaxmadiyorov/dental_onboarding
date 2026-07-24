@@ -28,9 +28,6 @@ class CvTextExtractor
     when "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       extract_docx
     when "application/msword"
-      # Legacy .doc format — .docx uchun ishlatiladigan gem buni o'qiy olmaydi.
-      # Amaliyotda .doc juda kam uchraydi; hozircha bo'sh matn qaytaramiz,
-      # parser esa keyin "manual continue" oqimiga tushadi.
       Rails.logger.warn("[CvTextExtractor] legacy .doc format is not supported for text extraction")
       ""
     else

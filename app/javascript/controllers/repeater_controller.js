@@ -1,7 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Education / WorkExperience repeaterlari uchun umumiy controller.
-// Ulash: <div data-controller="repeater" data-repeater-wrapper-selector-value=".nested-fields">
 export default class extends Controller {
   static targets = ["template", "list"]
 

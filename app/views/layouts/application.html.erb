@@ -26,9 +26,14 @@
   <body>
     <main class="mx-auto px-5">
       <% if authenticated? %>
-        <div class="w-full flex justify-end px-6 py-4">
+        <div class="w-full flex justify-end gap-3 px-6 py-4">
+          <% if Current.user.candidate? %>
+            <%= link_to "Profile", profile_candidate_onboarding_path,
+                class: "rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50" %>
+          <% end %>
+
           <%= button_to "Logout", logout_path, method: :delete,
-              class: "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 hover:bg-slate-50" %>
+              class: "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-700" %>
         </div>
       <% end %>
 

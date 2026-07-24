@@ -15,7 +15,6 @@ class CandidateProfilesController < ApplicationController
     authorize @profile
   end
 
-  # app/controllers/candidate_profiles_controller.rb
   def update
     if profile_params[:remove_free_text_skill_ids].present?
       @profile.candidate_skills.where(id: profile_params[:remove_free_text_skill_ids]).destroy_all
