@@ -60,7 +60,7 @@ class CvTextExtractor
     raise CorruptedFileError, "DOCX contains no readable text" if text.blank?
 
     text
-  rescue Docx::Errors::MalformedDocumentError, Zip::Error => e
+  rescue Zip::Error => e
     Rails.logger.error("[CvTextExtractor] corrupted docx: #{e.message}")
     raise CorruptedFileError, "DOCX file is corrupted or malformed"
   end

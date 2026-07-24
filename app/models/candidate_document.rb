@@ -4,7 +4,7 @@ class CandidateDocument < ApplicationRecord
 
   ALLOWED_TYPES = %w[application/pdf application/msword
     application/vnd.openxmlformats-officedocument.wordprocessingml.document].freeze
-  MAX_SIZE = ENV.fetch("CV_MAX_SIZE_MB").to_i
+  MAX_SIZE = ENV.fetch("CV_MAX_SIZE_MB", "25").to_i
 
   validates :file, presence: true
   validate :acceptable_file
